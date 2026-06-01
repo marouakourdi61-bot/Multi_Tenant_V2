@@ -1,0 +1,181 @@
+# =============================================================================
+# Laravel Octane FrankenPHP — Development Docker Compose
+# =============================================================================
+# All services use non-conflicting external ports to avoid clashes with
+# locally running services. Internal ports remain standard for inter-container
+# communication via the shared 'laravel-octane-frankenphp' network.
+#
+# Port Mapping Reference:
+#   PostgreSQL:   54320  → 5432
+#   Redis:        63790  → 6379
+#   Mailpit SMTP: 10250  → 1025
+#   Mailpit Web:  8025   → 8025
+#   MinIO API:    9000   → 9000
+#   MinIO Console:9001   → 9001
+#   Laravel Octane App:  8001   → 8000
+# =============================================================================
+
+services:
+  # ─── Laravel Octane FrankenPHP Application ──────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multi-tenant-app
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - OCTANE_SERVER=frankenphp
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=multi_tenant_V2
+      - DB_USERNAME=multi_tenant_V2
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - MAIL_FROM_ADDRESS=hello@multitenant.local
+      - MAIL_FROM_NAME=MultiTenant
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_BUCKET=multi-tenant
+      - AWS_ENDPOINT=http://minio:9000
+      - AWS_USE_PATH_STYLE_ENDPOINT=true
+      - FILESYSTEM_DISK=s3
+    volumes:
+      - app-storage:/app/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+      minio:
+        condition: service_started
+    networks:
+      - multi-tenant
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/up"]  # internal port
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ─── PostgreSQL ───────────────────────────────────────────────────────
+  postgres:
+    image: postgres:18.4-alpine
+    container_name: multi-tenant-postgres
+    restart: unless-stopped
+    ports:
+      - "54320:5432"
+    environment:
+      POSTGRES_DB: multi_tenant_V2
+      POSTGRES_USER: multi_tenant_V2
+      POSTGRES_PASSWORD: secret
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - multi-tenant
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U multi_tenant_V2 -d multi_tenant_V2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ────────────────────────────────────────────────────────────
+  redis:
+    image: redis:8.6-alpine
+    container_name: multi-tenant-redis
+    restart: unless-stopped
+    ports:
+      - "63790:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - multi-tenant
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Mailpit (Email Testing) ─────────────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: multi-tenant-mailpit
+    restart: unless-stopped
+    ports:
+      - "10250:1025"   # SMTP
+      - "8025:8025"    # Web UI
+    networks:
+      - multi-tenant
+
+  # ─── MinIO (S3-Compatible Storage) ───────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: multi-tenant-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"    # API
+      - "9001:9001"    # Console
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    networks:
+      - multi-tenant
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── MinIO Bucket Initialization ─────────────────────────────────────
+  minio-init:
+    image: minio/mc:latest
+    container_name: multi-tenant-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 minioadmin minioadmin;
+        mc mb local/multi-tenant --ignore-existing;
+        mc anonymous set public local/multi-tenant;
+        echo 'MinIO bucket initialized.';
+      "
+    networks:
+      - multi-tenant
+
+# ─── Volumes ──────────────────────────────────────────────────────────
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  minio-data:
+    driver: local
+  app-storage:
+    driver: local
+
+# ─── Networks ─────────────────────────────────────────────────────────
+networks:
+  multi-tenant:
+    driver: bridge

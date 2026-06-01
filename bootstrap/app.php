@@ -11,13 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-        ]);
+    $middleware->web(append: [
+        \App\Http\Middleware\HandleInertiaRequests::class,
+        \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
 
-        //
-    })
+        \App\Http\Middleware\InitializeTenant::class,
+    ]);
+})
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
