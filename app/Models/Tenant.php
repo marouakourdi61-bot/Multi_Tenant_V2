@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Contracts\IsTenant;
-
-class Tenant extends Model implements IsTenant
+use Spatie\Multitenancy\Models\Tenant as BaseTenant;
+use Spatie\Multitenancy\TenantCollection;
+ 
+class Tenant extends BaseTenant
 {
     protected $fillable = [
         'name',
@@ -14,5 +15,10 @@ class Tenant extends Model implements IsTenant
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function newCollection(array $models = []): TenantCollection
+    {
+        return new TenantCollection($models);
     }
 }

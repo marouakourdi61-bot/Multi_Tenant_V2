@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Spatie\Multitenancy\Models\Tenant;
+use App\Models\Tenant;
 
 class InitializeTenant
 {
@@ -17,7 +17,7 @@ class InitializeTenant
                 $tenant->makeCurrent();
             }
         }
-        
+
 
         return $next($request);
     }

@@ -102,7 +102,7 @@ services:
     container_name: multi-tenant-redis
     restart: unless-stopped
     ports:
-      - "63790:6379"
+      - "63800:6379"
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis-data:/data
@@ -133,7 +133,7 @@ services:
     ports:
       - "9000:9000"    # API
       - "9001:9001"    # Console
-    command: server /data --console-address ":9001"
+    command: server --address :9000 /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -142,7 +142,7 @@ services:
     networks:
       - multi-tenant
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/ready"]
       interval: 10s
       timeout: 5s
       retries: 5
