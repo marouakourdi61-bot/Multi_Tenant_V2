@@ -14,6 +14,7 @@ export default function CreateOrganization() {
         city: "",
         country: "",
         timezone: "Europe/Paris",
+        
     });
 
     const submit = (e) => {
