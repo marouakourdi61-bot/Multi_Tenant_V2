@@ -10,14 +10,26 @@ class InitializeTenant
 {
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->tenant_id) {
-            $tenant = Tenant::find(auth()->user()->tenant_id);
+        if (auth()->check()) {
 
-            if ($tenant) {
-                $tenant->makeCurrent();
+            $user = auth()->user();
+
+            if (!$user->tenant_id) {
+
+                if (!$request->is('tenants/create') && !$request->is('tenants')) {
+                    return redirect('/tenants/create');
+                }
+            }
+
+            if ($user->tenant_id) {
+
+                $tenant = Tenant::find($user->tenant_id);
+
+                if ($tenant) {
+                    $tenant->makeCurrent();
+                }
             }
         }
-
 
         return $next($request);
     }

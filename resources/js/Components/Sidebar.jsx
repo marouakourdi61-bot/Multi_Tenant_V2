@@ -12,10 +12,19 @@ export default function Sidebar() {
             </div>
 
             {/* Org */}
-            <div className="p-3 mb-4 border border-outline-variant rounded-lg bg-surface-container-lowest">
-                <div className="text-sm font-semibold">Test Org</div>
-                <div className="text-xs text-gray-500">Workspace</div>
-            </div>
+            {/* Create Organization */}
+            <Link
+                href="/tenants/create"
+                className="block p-3 mb-4 border border-dashed border-blue-300 rounded-lg bg-blue-50 hover:bg-blue-100 transition"
+            >
+                <div className="text-sm font-semibold text-blue-700">
+                    + Créer une organisation
+                </div>
+
+                <div className="text-xs text-blue-500">
+                    Nouveau workspace
+                </div>
+            </Link>
 
             {/* Nav */}
             <nav className="flex flex-col gap-1 text-sm">

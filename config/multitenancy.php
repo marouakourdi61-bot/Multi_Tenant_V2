@@ -47,8 +47,7 @@ return [
      * It must  extend `Spatie\Multitenancy\Models\Tenant::class` or
      * implement `Spatie\Multitenancy\Contracts\IsTenant::class` interface
      */
-    'tenant_model' => Tenant::class,
-
+    'tenant_model' => \App\Models\Tenant::class,
     /*
      * If there is a current tenant when dispatching a job, the id of the current tenant
      * will be automatically set on the job. When the job is executed, the set
@@ -110,8 +109,8 @@ return [
     ],
 
     /*
-    * Interface that once implemented, will make the job tenant aware
-    */
+     * Interface that once implemented, will make the job tenant aware
+     */
     'tenant_aware_interface' => TenantAware::class,
 
     /*

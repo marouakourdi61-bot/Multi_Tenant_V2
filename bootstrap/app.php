@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Http\Middleware\InitializeTenant::class,
     ]);
 })
+
+->withMiddleware(function ($middleware) {
+    $middleware->web(append: [
+        \App\Http\Middleware\InitializeTenant::class,
+    ]);
+})
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

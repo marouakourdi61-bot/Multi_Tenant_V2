@@ -22,23 +22,23 @@ Route::get('/dashboard', function () {
 
 
 
-Route::get('/tenant-test', function () {
+// Route::get('/tenant-test', function () {
 
-    $tenant = Tenant::find(auth()->user()->tenant_id);
+//     $tenant = Tenant::find(auth()->user()->tenant_id);
 
-    if ($tenant) {
-        $tenant->makeCurrent();
+//     if ($tenant) {
+//         $tenant->makeCurrent();
 
-        return response()->json([
-            'tenant_id' => $tenant->id,
-            'tenant_name' => $tenant->name,
-            'tenant_slug' => $tenant->slug,
-        ]);
-    }
+//         return response()->json([
+//             'tenant_id' => $tenant->id,
+//             'tenant_name' => $tenant->name,
+//             'tenant_slug' => $tenant->slug,
+//         ]);
+//     }
 
-    return 'No current tenant';
+//     return 'No current tenant';
 
-})->middleware(['auth']);
+// })->middleware(['auth']);
 
 
 
@@ -47,6 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+   
+
+
+     Route::get('/tenants/create', function () {
+        return Inertia::render('Tenants/Create');
+    });
 
     
 });

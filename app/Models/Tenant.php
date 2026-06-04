@@ -2,23 +2,13 @@
 
 namespace App\Models;
 
-use Spatie\Multitenancy\Models\Tenant as BaseTenant;
-use Spatie\Multitenancy\TenantCollection;
- 
-class Tenant extends BaseTenant
+use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
+
+class Tenant extends SpatieTenant
 {
     protected $fillable = [
         'name',
         'slug',
+        'is_active',
     ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
-
-    public function newCollection(array $models = []): TenantCollection
-    {
-        return new TenantCollection($models);
-    }
 }
