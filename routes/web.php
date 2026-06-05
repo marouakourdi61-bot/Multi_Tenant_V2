@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Tenant;
+use App\Features\Tenant\TenantController;
 
 
 Route::get('/', function () {
@@ -53,6 +54,22 @@ Route::middleware('auth')->group(function () {
      Route::get('/tenants/create', function () {
         return Inertia::render('Tenants/Create');
     });
+
+    // routes/web.php
+
+
+
+
+
+
+    Route::get('/tenants/create', [TenantController::class, 'create'])
+        ->name('tenants.create');
+
+    Route::post('/tenants', [TenantController::class, 'store'])
+        ->name('tenants.store');
+
+
+
 
     
 });
