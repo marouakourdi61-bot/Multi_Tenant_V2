@@ -5,6 +5,7 @@ export default function Sidebar() {
     const page = usePage();
     const auth = page.props?.auth ?? {};
 
+    // console.log('auth props', auth);
 
     return (
         <aside className="w-[260px] h-screen border-r border-outline-variant bg-surface flex flex-col py-6 px-4">

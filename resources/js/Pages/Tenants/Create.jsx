@@ -1,5 +1,5 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 
 export default function CreateOrganization() {
 
@@ -20,7 +20,11 @@ export default function CreateOrganization() {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('tenants.store'));
+        post(route('tenants.store'), {
+            onSuccess: () => {
+                router.reload({ only: ['auth'] });
+            },
+        });
     };
 
     return (

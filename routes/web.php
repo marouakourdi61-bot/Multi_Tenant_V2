@@ -51,11 +51,8 @@ Route::middleware('auth')->group(function () {
    
 
 
-     Route::get('/tenants/create', function () {
-        return Inertia::render('Tenants/Create');
-    });
-
-    // routes/web.php
+    Route::get('/tenants/create', [TenantController::class, 'create'])
+        ->name('tenants.create');
 
 
 
