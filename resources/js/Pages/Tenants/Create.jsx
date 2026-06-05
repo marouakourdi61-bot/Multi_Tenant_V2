@@ -14,13 +14,13 @@ export default function CreateOrganization() {
         city: "",
         country: "",
         timezone: "Europe/Paris",
-        
+
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post("/organizations");
+        post(route('tenants.store'));
     };
 
     return (
@@ -60,6 +60,16 @@ export default function CreateOrganization() {
                             onSubmit={submit}
                             className="space-y-5"
                         >
+                            {Object.keys(errors).length > 0 && (
+                                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                                    <p className="font-semibold">Veuillez corriger les erreurs suivantes :</p>
+                                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                                        {Object.entries(errors).map(([key, message]) => (
+                                            <li key={key}>{message}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
                             {/* Email */}
                             <div>

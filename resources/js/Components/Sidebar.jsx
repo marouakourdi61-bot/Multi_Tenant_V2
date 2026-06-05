@@ -1,6 +1,11 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 export default function Sidebar() {
+
+    const page = usePage();
+    const auth = page.props?.auth ?? {};
+
+
     return (
         <aside className="w-[260px] h-screen border-r border-outline-variant bg-surface flex flex-col py-6 px-4">
 
@@ -15,14 +20,14 @@ export default function Sidebar() {
             {/* Create Organization */}
             <Link
                 href="/tenants/create"
-                className="block p-3 mb-4 border border-dashed border-blue-300 rounded-lg bg-blue-50 hover:bg-blue-100 transition"
+                className="block p-3 mb-4 border border-outline-variant rounded-lg bg-surface-container-lowest hover:border-blue-500 hover:bg-blue-50 transition"
             >
-                <div className="text-sm font-semibold text-blue-700">
-                    + Créer une organisation
+                <div className="text-sm font-semibold">
+                    {auth.tenant?.name || "Créer une organisation"}
                 </div>
 
-                <div className="text-xs text-blue-500">
-                    Nouveau workspace
+                <div className="text-xs text-gray-500">
+                    Workspace
                 </div>
             </Link>
 

@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 class TenantController extends Controller
 {
-    // Show create organization page
+    // Show / create organization 
      
     public function create()
     {
@@ -36,7 +36,7 @@ class TenantController extends Controller
 
         $user->save();
 
-        // Make tenant current
+        //  tenant current
         $tenant->makeCurrent();
 
         return redirect('/dashboard');
