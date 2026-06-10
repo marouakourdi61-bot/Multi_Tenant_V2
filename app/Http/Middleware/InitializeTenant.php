@@ -13,21 +13,22 @@ class InitializeTenant
         if (auth()->check()) {
 
             $user = auth()->user();
+            $tenant = null;
 
-            if (!$user->tenant_id) {
+            if ($user->tenant_id) {
+                $tenant = Tenant::find($user->tenant_id);
+            }
 
+            if (!$tenant) {
+                $tenant = Tenant::where('user_id', $user->id)->latest()->first();
+            }
+
+            if (!$tenant) {
                 if (!$request->is('tenants/create') && !$request->is('tenants')) {
                     return redirect('/tenants/create');
                 }
-            }
-
-            if ($user->tenant_id) {
-
-                $tenant = Tenant::find($user->tenant_id);
-
-                if ($tenant) {
-                    $tenant->makeCurrent();
-                }
+            } else {
+                $tenant->makeCurrent();
             }
         }
 

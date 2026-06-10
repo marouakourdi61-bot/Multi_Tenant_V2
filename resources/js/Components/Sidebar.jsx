@@ -20,7 +20,7 @@ export default function Sidebar() {
             {/* Org */}
             {/* Create Organization */}
             <Link
-                href="/tenants/create"
+                href={route('tenants.create')}
                 className="block p-3 mb-4 border border-outline-variant rounded-lg bg-surface-container-lowest hover:border-blue-500 hover:bg-blue-50 transition"
             >
                 <div className="text-sm font-semibold">
@@ -35,7 +35,7 @@ export default function Sidebar() {
             {/* Nav */}
             <nav className="flex flex-col gap-1 text-sm">
 
-                <Link href="/dashboard" className="px-3 py-2 rounded-lg bg-primary/10 text-primary">
+                <Link href={route('dashboard')} className="px-3 py-2 rounded-lg bg-primary/10 text-primary">
                     Dashboard
                 </Link>
 

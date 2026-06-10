@@ -34,12 +34,20 @@ class HandleInertiaRequests extends Middleware
 
 
         $user = $request->user();
-        // dd($user->tenant_id, $user->tenant);
+
+        $tenant = null;
+        if ($user) {
+            $tenant = $user->tenant;
+            if (!$tenant) {
+                $tenant = $user->tenants()->latest()->first();
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
-                'tenant' => $user?->load('tenant')->tenant,
+                'tenant' => $tenant,
             ],
         ];
     }
