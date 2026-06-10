@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import DashboardLayout from '../../../Layouts/DashboardLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 
 export default function Create() {
 

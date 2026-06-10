@@ -43,7 +43,7 @@ export default function Sidebar() {
                     Quotes
                 </Link>
 
-                <Link href="/invoices" className="px-3 py-2 rounded-lg hover:bg-gray-100">
+                <Link href={route('invoices.index')} className="px-3 py-2 rounded-lg hover:bg-gray-100">
                     Invoices
                 </Link>
 

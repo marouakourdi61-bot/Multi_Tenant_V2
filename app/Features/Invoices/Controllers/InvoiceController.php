@@ -10,14 +10,14 @@ class InvoiceController extends Controller
 {
     public function index()
     {
-        return inertia('Features/Invoices/Pages/Index', [
+        return inertia('Invoices/Index', [
             'invoices' => Invoice::latest()->get(),
         ]);
     }
 
     public function create()
     {
-        return inertia('Features/Invoices/Pages/Create');
+        return inertia('Invoices/Create');
     }
 
     public function store(Request $request)

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import DashboardLayout from '../../../Layouts/DashboardLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Link } from '@inertiajs/react';
 
 export default function Index({ invoices = [] }) {
