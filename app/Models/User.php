@@ -11,7 +11,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-   
+
     protected $fillable = [
         'name',
         'email',
@@ -19,13 +19,13 @@ class User extends Authenticatable
         'tenant_id',
     ];
 
-    
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    
+
     protected function casts(): array
     {
         return [
@@ -34,7 +34,12 @@ class User extends Authenticatable
         ];
     }
 
-    
+
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
+    }
+
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
