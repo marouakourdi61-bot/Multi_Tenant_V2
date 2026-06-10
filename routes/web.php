@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Tenant;
 use App\Features\Tenant\TenantController;
+use App\Features\invoices\Controllers\InvoiceController;
 
 
 Route::get('/', function () {
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-   
+
 
 
     Route::get('/tenants/create', [TenantController::class, 'create'])
@@ -67,8 +68,16 @@ Route::middleware('auth')->group(function () {
 
 
 
+    Route::get('/invoices', [InvoiceController::class, 'index'])
+        ->name('invoices.index');
 
-    
+    Route::get('/invoices/create', [InvoiceController::class, 'create']);
+    Route::post('/invoices', [InvoiceController::class, 'store']);
+
+
+
+
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
