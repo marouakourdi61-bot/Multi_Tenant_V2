@@ -3,7 +3,7 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 
 export default function Create() {
 
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         recipient: '',
         issue_date: new Date().toISOString().split('T')[0],
         currency: 'MAD',
@@ -53,7 +53,7 @@ export default function Create() {
 
     const submit = (e) => {
         e.preventDefault();
-        post('/invoices');
+        post(route('invoices.store'));
     };
 
     return (
@@ -92,6 +92,17 @@ export default function Create() {
                     </div>
                 </section>
 
+                {Object.keys(errors).length > 0 && (
+                    <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+                        <p className="font-semibold">Veuillez corriger les erreurs suivantes :</p>
+                        <ul className="mt-3 list-disc space-y-1 pl-5">
+                            {Object.entries(errors).map(([key, message]) => (
+                                <li key={key}>{message}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <section className="grid gap-6 lg:grid-cols-[1.6fr_0.9fr]">
 
                     <div className="space-y-6">
@@ -114,6 +125,9 @@ export default function Create() {
                                     <option>Client A</option>
                                     <option>Client B</option>
                                 </select>
+                                {errors.recipient && (
+                                    <p className="mt-2 text-sm text-red-600">{errors.recipient}</p>
+                                )}
                             </div>
                         </div>
 
@@ -127,10 +141,14 @@ export default function Create() {
 
                             <div className="mt-6 grid gap-4 sm:grid-cols-2">
                                 <input
+                                    type="date"
                                     className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
                                     value={data.issue_date}
                                     onChange={e => setData('issue_date', e.target.value)}
                                 />
+                                {errors.issue_date && (
+                                    <p className="mt-2 text-sm text-red-600">{errors.issue_date}</p>
+                                )}
 
                                 <select
                                     className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"

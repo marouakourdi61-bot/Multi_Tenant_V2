@@ -29,6 +29,7 @@ class InitializeTenant
                 }
             } else {
                 $tenant->makeCurrent();
+                $user->setRelation('tenant', $tenant);
             }
         }
 

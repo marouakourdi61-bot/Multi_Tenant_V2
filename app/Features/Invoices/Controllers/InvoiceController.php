@@ -22,7 +22,7 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $data = $request->validate([
             'recipient' => 'required|string',
             'currency' => 'required|string',
@@ -40,15 +40,18 @@ class InvoiceController extends Controller
             $total += $lineTotal;
         }
 
+        $tenantId = auth()->user()->tenant?->id
+            ?? auth()->user()->tenants()->latest()->value('id');
+
         $invoice = Invoice::create([
-            'user_id' => auth()->id(),
+            'tenant_id' => $tenantId,
             'invoice_number' => 'INV-' . time(),
             'recipient' => $data['recipient'],
             'currency' => $data['currency'],
             'vat' => $data['vat'],
             'items' => $data['items'],
-            'notes' => $data['notes'] ?? null,
-            'concluding_text' => $data['concluding_text'] ?? null,
+            'notes' => $data['notes'],
+            'concluding_text' => $data['concluding_text'],
             'total' => $total,
             'status' => 'draft',
             'issue_date' => $data['issue_date'],

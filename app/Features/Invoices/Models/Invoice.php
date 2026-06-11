@@ -8,7 +8,7 @@ use App\Models\User;
 class Invoice extends Model
 {
     protected $fillable = [
-        'user_id',
+        'tenant_id',
         'invoice_number',
         'recipient',
         'currency',

@@ -72,7 +72,8 @@ Route::middleware('auth')->group(function () {
         ->name('invoices.index');
 
     Route::get('/invoices/create', [InvoiceController::class, 'create']);
-    Route::post('/invoices', [InvoiceController::class, 'store']);
+    Route::post('/invoices', [InvoiceController::class, 'store'])
+        ->name('invoices.store');
 
 
 

@@ -7,8 +7,8 @@ export default function Index({ invoices = [] }) {
 
     // 🔎 Dynamic filter
     const filteredInvoices = invoices.filter((inv) =>
-        inv.client_name.toLowerCase().includes(search.toLowerCase()) ||
-        inv.invoice_number.toLowerCase().includes(search.toLowerCase())
+        (inv.recipient ?? inv.client_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+        (inv.invoice_number ?? '').toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -87,7 +87,7 @@ export default function Index({ invoices = [] }) {
                                             </td>
 
                                             <td className="px-6 py-4 text-slate-600">
-                                                {inv.client_name}
+                                                {inv.recipient ?? inv.client_name ?? '-'}
                                             </td>
 
                                             <td className="px-6 py-4 font-medium text-slate-900">

@@ -6,52 +6,49 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
+
             $table->id();
 
-            // Organization / Tenant
+            // tenant
             $table->foreignId('tenant_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            // Invoice info
-            $table->string('number')->unique();
+            // invoice
+            $table->string('invoice_number')->unique();
 
-            $table->date('issue_date');
-            $table->date('due_date')->nullable();
+            $table->string('recipient');
 
-            // Client
-            $table->string('client_name');
+            $table->string('currency')->default('MAD');
 
-            // Amounts
-            $table->decimal('subtotal', 10, 2)->default(0);
-            $table->decimal('tax_amount', 10, 2)->default(0);
-            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->boolean('vat')->default(false);
 
-            // Status
+            $table->json('items');
+
+            $table->text('notes')->nullable();
+
+            $table->text('concluding_text')->nullable();
+
+            $table->decimal('total', 10, 2)->default(0);
+
             $table->enum('status', [
                 'draft',
                 'sent',
                 'paid',
-                'unpaid',
                 'cancelled',
             ])->default('draft');
 
-            // Notes
-            $table->text('notes')->nullable();
+            $table->date('issue_date');
+
+            $table->date('due_date')->nullable();
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('invoices');
