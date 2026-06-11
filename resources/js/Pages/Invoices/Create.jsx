@@ -57,188 +57,216 @@ export default function Create() {
     };
 
     return (
-        <form onSubmit={submit} className="min-h-screen bg-surface font-sans text-on-surface">
+        <form onSubmit={submit} className="min-h-screen bg-slate-100 text-slate-900">
 
-            <main className="max-w-6xl mx-auto px-container-padding py-8">
+            <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
 
                 {/* HEADER */}
-                <header className="flex items-center justify-between pb-6 border-b border-outline-variant mb-8">
-                    <h1 className="text-xl font-semibold text-on-surface-variant">
-                        FA202600001
-                    </h1>
+                <section className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <p className="text-sm uppercase tracking-[0.2em] text-slate-500 mb-2">Nouvelle facture</p>
+                        <h1 className="text-3xl font-semibold text-slate-900">Créez votre facture</h1>
+                        <p className="mt-2 text-sm text-slate-500">Complétez les informations ci-dessous pour générer votre facture.</p>
+                    </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
+                            Numéro: FA202600001
+                        </span>
+
                         <button
                             type="button"
                             onClick={() => window.history.back()}
-                            className="px-6 py-2.5 text-sm font-medium border border-outline-variant rounded-md hover:bg-surface-container"
+                            className="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                         >
-                            Cancel
+                            Annuler
                         </button>
 
-                        <button type="submit"
+                        <button
+                            type="submit"
                             disabled={processing}
-                            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-primary text-on-primary rounded-md btn-shadow hover:brightness-110"
+                            className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            Save Invoice
+                            Enregistrer
                         </button>
                     </div>
-                </header>
-
-                {/* RECIPIENT */}
-                <section className="mb-10">
-                    <h2 className="text-lg font-bold mb-4">Recipient</h2>
-
-                    <select
-                        className="w-full max-w-lg h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
-                        value={data.recipient}
-                        onChange={e => setData('recipient', e.target.value)}
-                    >
-                        <option value="">Select a recipient...</option>
-                        <option>Client A</option>
-                        <option>Client B</option>
-                    </select>
                 </section>
 
-                {/* INFO */}
-                <section className="space-y-6 mb-10">
-                    <h2 className="text-lg font-bold">Information</h2>
+                <section className="grid gap-6 lg:grid-cols-[1.6fr_0.9fr]">
 
-                    <div className="flex flex-wrap gap-8">
-                        <input
-                            className="w-64 h-11 px-4 border border-outline-variant rounded-xl"
-                            value={data.issue_date}
-                            onChange={e => setData('issue_date', e.target.value)}
-                        />
+                    <div className="space-y-6">
 
-                        <select
-                            className="w-48 h-11 px-4 border border-outline-variant rounded-xl"
-                            value={data.currency}
-                            onChange={e => setData('currency', e.target.value)}
-                        >
-                            <option>MAD</option>
-                            <option>USD</option>
-                            <option>EUR</option>
-                        </select>
-                    </div>
-
-                    <label className="flex items-center gap-3 mt-4">
-                        <input
-                            type="checkbox"
-                            checked={data.vat}
-                            onChange={e => setData('vat', e.target.checked)}
-                        />
-                        VAT not applicable
-                    </label>
-                </section>
-
-                {/* ITEMS */}
-                <section className="space-y-4 mb-10">
-                    <h2 className="text-lg font-bold">Articles</h2>
-
-                    {data.items.map((item, index) => (
-                        <div key={index} className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 space-y-4">
-
-                            <div className="grid grid-cols-12 gap-4 items-center">
-
-                                <div className="col-span-1 text-center font-bold">
-                                    {index + 1}
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-slate-900">Destinataire</h2>
+                                    <p className="mt-1 text-sm text-slate-500">Choisissez le client pour cette facture.</p>
                                 </div>
+                            </div>
 
+                            <div className="mt-5">
+                                <select
+                                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                    value={data.recipient}
+                                    onChange={e => setData('recipient', e.target.value)}
+                                >
+                                    <option value="">Select a recipient...</option>
+                                    <option>Client A</option>
+                                    <option>Client B</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-slate-900">Informations</h2>
+                                    <p className="mt-1 text-sm text-slate-500">Date d’émission, devise et TVA.</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 grid gap-4 sm:grid-cols-2">
                                 <input
-                                    className="col-span-1 h-11 border border-outline-variant rounded-xl text-center"
-                                    type="number"
-                                    value={item.qty}
-                                    onChange={e => updateItem(index, 'qty', e.target.value)}
+                                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                    value={data.issue_date}
+                                    onChange={e => setData('issue_date', e.target.value)}
                                 />
 
                                 <select
-                                    className="col-span-2 h-11 border border-outline-variant rounded-xl"
-                                    value={item.type}
-                                    onChange={e => updateItem(index, 'type', e.target.value)}
+                                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                    value={data.currency}
+                                    onChange={e => setData('currency', e.target.value)}
                                 >
-                                    <option>Service</option>
-                                    <option>Product</option>
+                                    <option>MAD</option>
+                                    <option>USD</option>
+                                    <option>EUR</option>
                                 </select>
+                            </div>
 
+                            <label className="mt-6 flex items-center gap-3 text-sm text-slate-700">
                                 <input
-                                    className="col-span-3 h-11 border border-outline-variant rounded-xl px-3"
-                                    placeholder="Name"
-                                    value={item.name}
-                                    onChange={e => updateItem(index, 'name', e.target.value)}
+                                    type="checkbox"
+                                    checked={data.vat}
+                                    onChange={e => setData('vat', e.target.checked)}
+                                    className="h-4 w-4 rounded border-slate-300 text-slate-900"
                                 />
+                                VAT non applicable
+                            </label>
+                        </div>
 
-                                <input
-                                    className="col-span-2 h-11 border border-outline-variant rounded-xl px-3"
-                                    type="number"
-                                    value={item.unit_price}
-                                    onChange={e => updateItem(index, 'unit_price', e.target.value)}
-                                />
-
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-slate-900">Articles</h2>
+                                    <p className="mt-1 text-sm text-slate-500">Ajoutez ou modifiez les lignes de facture.</p>
+                                </div>
                                 <button
                                     type="button"
-                                    onClick={() => removeItem(index)}
-                                    className="col-span-1 text-red-500"
+                                    onClick={addItem}
+                                    className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
                                 >
-                                    X
+                                    + Article
                                 </button>
                             </div>
 
-                            <input
-                                className="w-full h-11 border border-outline-variant rounded-xl px-3"
-                                placeholder="Description"
-                                value={item.description}
-                                onChange={e => updateItem(index, 'description', e.target.value)}
+                            <div className="mt-6 space-y-4">
+                                {data.items.map((item, index) => (
+                                    <div key={index} className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                        <div className="grid gap-3 md:grid-cols-[auto_1fr_150px_150px_auto] items-center">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white font-semibold text-slate-900">
+                                                {index + 1}
+                                            </div>
+
+                                            <input
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                                placeholder="Nom"
+                                                value={item.name}
+                                                onChange={e => updateItem(index, 'name', e.target.value)}
+                                            />
+
+                                            <input
+                                                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                                type="number"
+                                                value={item.qty}
+                                                onChange={e => updateItem(index, 'qty', e.target.value)}
+                                                placeholder="Quantité"
+                                            />
+
+                                            <input
+                                                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                                type="number"
+                                                value={item.unit_price}
+                                                onChange={e => updateItem(index, 'unit_price', e.target.value)}
+                                                placeholder="Prix"
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() => removeItem(index)}
+                                                className="rounded-2xl bg-red-100 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-200"
+                                            >
+                                                Supprimer
+                                            </button>
+                                        </div>
+
+                                        <input
+                                            className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                            placeholder="Description"
+                                            value={item.description}
+                                            onChange={e => updateItem(index, 'description', e.target.value)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside className="space-y-6">
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <h2 className="text-lg font-semibold text-slate-900">Résumé</h2>
+                            <div className="mt-6 space-y-4 text-sm text-slate-600">
+                                <div className="flex items-center justify-between">
+                                    <span>Total HT</span>
+                                    <span>0,00 MAD</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span>VAT</span>
+                                    <span>0,00 MAD</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span>Remise</span>
+                                    <span>0,00 MAD</span>
+                                </div>
+                            </div>
+                            <div className="mt-6 rounded-3xl bg-slate-900 px-5 py-4 text-white">
+                                <div className="flex items-center justify-between text-sm uppercase tracking-[0.18em] text-slate-300">
+                                    <span>Total TTC</span>
+                                    <span>0,00 MAD</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <h2 className="text-lg font-semibold text-slate-900">Notes</h2>
+                            <textarea
+                                className="mt-4 h-36 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                placeholder="Notes"
+                                value={data.notes}
+                                onChange={e => setData('notes', e.target.value)}
                             />
                         </div>
-                    ))}
 
-                    <button type="button" onClick={addItem} className="text-primary font-semibold">
-                        + Add Article
-                    </button>
-                </section>
-
-                {/* FOOTER */}
-                <section className="grid grid-cols-12 gap-8">
-
-                    <div className="col-span-7 space-y-6">
-                        <textarea
-                            className="w-full border border-outline-variant rounded-2xl p-4"
-                            placeholder="Notes"
-                            value={data.notes}
-                            onChange={e => setData('notes', e.target.value)}
-                        />
-
-                        <textarea
-                            className="w-full border border-outline-variant rounded-2xl p-4"
-                            placeholder="Concluding text"
-                            value={data.concluding_text}
-                            onChange={e => setData('concluding_text', e.target.value)}
-                        />
-                    </div>
-
-                    <div className="col-span-5">
-                        <div className="bg-surface-container border border-outline-variant rounded-[2.5rem] p-8 space-y-4">
-
-                            <div className="flex justify-between">
-                                <span>Total HT</span>
-                                <span>0,00 MAD</span>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span>VAT</span>
-                                <span>0,00 MAD</span>
-                            </div>
-
-                            <div className="border-t pt-4 flex justify-between font-bold">
-                                <span>Total TTC</span>
-                                <span className="text-primary">0,00 MAD</span>
-                            </div>
+                        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                            <h2 className="text-lg font-semibold text-slate-900">Concluding text</h2>
+                            <textarea
+                                className="mt-4 h-36 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                placeholder="Concluding text"
+                                value={data.concluding_text}
+                                onChange={e => setData('concluding_text', e.target.value)}
+                            />
                         </div>
-                    </div>
-
+                    </aside>
                 </section>
-
             </main>
         </form>
     );

@@ -6,36 +6,42 @@ import EmptyState from "@/Components/EmptyState";
 export default function Dashboard() {
     return (
         <DashboardLayout>
-
-            {/* Top Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-
-                <MetricCard title="Total Revenue" value="0 MAD" description="Lifetime earnings" />
-                <MetricCard title="Pending" value="0 MAD" description="Unpaid invoices" />
-                <MetricCard title="Clients" value="0" description="Active clients" />
-                <MetricCard title="Invoices" value="0" description="Total invoices" />
-
-            </div>
-         
-
-            {/* Main */}
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-
-                <div className="xl:col-span-3 bg-white rounded-2xl border p-6">
-                    <h2 className="text-xl font-semibold mb-4">
-                        Invoices Overview
-                    </h2>
-
-                    <EmptyState
-                        title="No invoices yet"
-                        buttonText="Create invoice"
-                    />
+            <div className="space-y-8">
+                {/* Header */}
+                <div>
+                    <h1 className="text-3xl font-semibold text-slate-900">Tableau de bord</h1>
+                    <p className="mt-2 text-sm text-slate-500">Bienvenue, voici un aperçu de votre activité.</p>
                 </div>
 
-                <InvoiceStatus />
+                {/* Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    <MetricCard title="Revenu total" value="0 MAD" description="Gains cumulés" />
+                    <MetricCard title="En attente" value="0 MAD" description="Factures impayées" />
+                    <MetricCard title="Clients" value="0" description="Clients actifs" />
+                    <MetricCard title="Factures" value="0" description="Nombre total" />
+                </div>
 
+                {/* Main Content */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    {/* Invoices Overview */}
+                    <div className="xl:col-span-2 rounded-3xl bg-white border border-slate-200 shadow-sm p-8">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-semibold text-slate-900">Aperçu des factures</h2>
+                                <p className="mt-1 text-sm text-slate-500">Aucune facture créée pour le moment.</p>
+                            </div>
+                        </div>
+
+                        <EmptyState
+                            title="Aucune facture pour le moment"
+                            buttonText="Créer une facture"
+                        />
+                    </div>
+
+                    {/* Status Widget */}
+                    <InvoiceStatus />
+                </div>
             </div>
-
         </DashboardLayout>
     );
 }

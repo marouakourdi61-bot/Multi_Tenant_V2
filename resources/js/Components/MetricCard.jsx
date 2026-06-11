@@ -1,9 +1,9 @@
 export default function MetricCard({ title, value, description }) {
     return (
-        <div className="bg-white border rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500">{title}</p>
-            <h3 className="text-2xl font-bold mt-1">{value}</h3>
-            <p className="text-xs text-gray-400 mt-2">{description}</p>
+        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-slate-500">{title}</p>
+            <h3 className="mt-3 text-3xl font-bold text-slate-900">{value}</h3>
+            <p className="mt-2 text-xs text-slate-500">{description}</p>
         </div>
     )
 }   

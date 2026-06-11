@@ -13,100 +13,110 @@ export default function Index({ invoices = [] }) {
 
     return (
         <DashboardLayout>
-
-            {/* HEADER */}
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold">Invoices</h1>
-                <p className="text-slate-500">Dashboard / Invoices</p>
-            </div>
-
-            {/* METRICS */}
-            <div className="mb-4 text-sm text-slate-600 flex gap-4">
-                <span>Total: {invoices.length}</span>
-                <span>Paid: {invoices.filter(i => i.status === 'paid').length}</span>
-                <span>Pending: {invoices.filter(i => i.status === 'pending').length}</span>
-            </div>
-
-            {/* ACTION BAR */}
-            <div className="flex flex-wrap justify-between gap-4 mb-6">
-
-                {/* SEARCH */}
-                <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="border rounded px-3 py-2 w-80"
-                    placeholder="Search invoices..."
-                />
-
-                {/* BUTTON */}
-                <Link
-                    href="/invoices/create"
-                    className="bg-indigo-600 text-white px-4 py-2 rounded"
-                >
-                    New Invoice
-                </Link>
-
-            </div>
-
-            {/* CONTENT */}
-            {filteredInvoices.length === 0 ? (
-                <div className="text-center py-20 text-slate-500">
-                    No invoices found
+            <div className="space-y-8">
+                {/* HEADER */}
+                <div>
+                    <h1 className="text-3xl font-semibold text-slate-900">Factures</h1>
+                    <p className="mt-2 text-sm text-slate-500">Gérez et consultez toutes vos factures.</p>
                 </div>
-            ) : (
-                <div className="overflow-x-auto bg-white border rounded">
 
-                    <table className="w-full text-sm">
-
-                        <thead className="bg-slate-50 text-slate-600">
-                            <tr>
-                                <th className="text-left p-3">Invoice #</th>
-                                <th className="text-left p-3">Client</th>
-                                <th className="text-left p-3">Total</th>
-                                <th className="text-left p-3">Status</th>
-                                <th className="text-left p-3">Date</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {filteredInvoices.map((inv) => (
-                                <tr key={inv.id} className="border-t">
-
-                                    <td className="p-3 font-medium">
-                                        {inv.invoice_number}
-                                    </td>
-
-                                    <td className="p-3">
-                                        {inv.client_name}
-                                    </td>
-
-                                    <td className="p-3">
-                                        {inv.total} MAD
-                                    </td>
-
-                                    <td className="p-3">
-                                        <span className={
-                                            inv.status === 'paid'
-                                                ? 'text-green-600 font-medium'
-                                                : 'text-orange-500 font-medium'
-                                        }>
-                                            {inv.status}
-                                        </span>
-                                    </td>
-
-                                    <td className="p-3">
-                                        {inv.issue_date}
-                                    </td>
-
-                                </tr>
-                            ))}
-                        </tbody>
-
-                    </table>
-
+                {/* METRICS */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                        <p className="text-xs font-medium uppercase tracking-[0.15em] text-slate-500">Factures totales</p>
+                        <h3 className="mt-3 text-3xl font-bold text-slate-900">{invoices.length}</h3>
+                    </div>
+                    <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                        <p className="text-xs font-medium uppercase tracking-[0.15em] text-slate-500">Payées</p>
+                        <h3 className="mt-3 text-3xl font-bold text-green-600">{invoices.filter(i => i.status === 'paid').length}</h3>
+                    </div>
+                    <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
+                        <p className="text-xs font-medium uppercase tracking-[0.15em] text-slate-500">En attente</p>
+                        <h3 className="mt-3 text-3xl font-bold text-yellow-600">{invoices.filter(i => i.status === 'pending').length}</h3>
+                    </div>
                 </div>
-            )}
 
+                {/* ACTION BAR */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 md:max-w-sm"
+                        placeholder="Rechercher une facture..."
+                    />
+
+                    <Link
+                        href="/invoices/create"
+                        className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    >
+                        + Nouvelle facture
+                    </Link>
+                </div>
+
+                {/* CONTENT */}
+                {filteredInvoices.length === 0 ? (
+                    <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-12">
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <div className="mb-4 inline-flex items-center justify-center rounded-full bg-slate-100 p-4">
+                                <svg className="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <p className="text-sm text-slate-500">Aucune facture trouvée</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="border-b border-slate-200 bg-slate-50">
+                                    <tr>
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-900">Facture #</th>
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-900">Client</th>
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-900">Montant</th>
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-900">Statut</th>
+                                        <th className="px-6 py-4 text-left font-semibold text-slate-900">Date</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-slate-200">
+                                    {filteredInvoices.map((inv) => (
+                                        <tr key={inv.id} className="transition hover:bg-slate-50">
+                                            <td className="px-6 py-4 font-semibold text-slate-900">
+                                                {inv.invoice_number}
+                                            </td>
+
+                                            <td className="px-6 py-4 text-slate-600">
+                                                {inv.client_name}
+                                            </td>
+
+                                            <td className="px-6 py-4 font-medium text-slate-900">
+                                                {inv.total} MAD
+                                            </td>
+
+                                            <td className="px-6 py-4">
+                                                {inv.status === 'paid' ? (
+                                                    <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                                        Payée
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
+                                                        En attente
+                                                    </span>
+                                                )}
+                                            </td>
+
+                                            <td className="px-6 py-4 text-slate-600">
+                                                {inv.issue_date}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+            </div>
         </DashboardLayout>
     );
 }
