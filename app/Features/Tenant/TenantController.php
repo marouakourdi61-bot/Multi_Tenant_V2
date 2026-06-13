@@ -60,9 +60,23 @@ class TenantController extends Controller
             'timezone' => $request->timezone,
         ]);
 
-        // Set current tenant
         $tenant->makeCurrent();
+        $request->session()->put('tenant_id', $tenant->id);
 
         return redirect('/dashboard');
+    }
+
+    public function switch(Tenant $tenant)
+    {
+        $user = auth()->user();
+
+        if ($user->tenants()->where('id', $tenant->id)->doesntExist()) {
+            abort(403);
+        }
+
+        $tenant->makeCurrent();
+        request()->session()->put('tenant_id', $tenant->id);
+
+        return redirect()->route('dashboard');
     }
 }

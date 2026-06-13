@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,9 +19,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 
 
@@ -55,13 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/tenants/create', [TenantController::class, 'create'])
         ->name('tenants.create');
 
-
-
-
-
-
-    Route::get('/tenants/create', [TenantController::class, 'create'])
-        ->name('tenants.create');
+    Route::post('/tenants/{tenant}/switch', [TenantController::class, 'switch'])
+        ->name('tenants.switch');
 
     Route::post('/tenants', [TenantController::class, 'store'])
         ->name('tenants.store');
@@ -74,6 +68,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices/create', [InvoiceController::class, 'create']);
     Route::post('/invoices', [InvoiceController::class, 'store'])
         ->name('invoices.store');
+
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])
+        ->name('invoices.show');
+
+    Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])
+        ->name('invoices.edit');
+
+    Route::match(['put', 'patch'], '/invoices/{invoice}', [InvoiceController::class, 'update'])
+        ->name('invoices.update');
+
+    Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])
+        ->name('invoices.destroy');
+
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'downloadPdf'])
+        ->name('invoices.download');
 
 
 

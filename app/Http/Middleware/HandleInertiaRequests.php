@@ -29,19 +29,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // dd($request->user());
-
-
-
         $user = $request->user();
 
         $tenant = null;
         $tenants = [];
 
         if ($user) {
-            $tenant = $user->tenant;
+            $tenantId = session('tenant_id');
+            if ($tenantId) {
+                $tenant = $user->tenants()->find($tenantId);
+            }
+
             if (!$tenant) {
                 $tenant = $user->tenants()->latest()->first();
+                if ($tenant) {
+                    session(['tenant_id' => $tenant->id]);
+                }
             }
 
             $tenants = $user->tenants()->get();

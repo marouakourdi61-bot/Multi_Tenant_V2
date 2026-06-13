@@ -14,13 +14,14 @@ class InitializeTenant
 
             $user = auth()->user();
             $tenant = null;
+            $tenantId = $request->session()->get('tenant_id');
 
-            if ($user->tenant_id) {
-                $tenant = Tenant::find($user->tenant_id);
+            if ($tenantId) {
+                $tenant = $user->tenants()->find($tenantId);
             }
 
             if (!$tenant) {
-                $tenant = Tenant::where('user_id', $user->id)->latest()->first();
+                $tenant = $user->tenants()->latest()->first();
             }
 
             if (!$tenant) {

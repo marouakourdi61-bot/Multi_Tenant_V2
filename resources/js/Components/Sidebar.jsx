@@ -59,9 +59,12 @@ export default function Sidebar() {
                     <div className="mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
 
                         {(auth.tenants || []).map((tenant) => (
-                            <div
+                            <Link
                                 key={tenant.id}
+                                href={route('tenants.switch', { tenant: tenant.id })}
+                                method="post"
                                 className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"
+                                preserveScroll
                             >
                                 <div className="flex items-center gap-3">
 
@@ -96,7 +99,7 @@ export default function Sidebar() {
                                     />
 
                                 </div>
-                            </div>
+                            </Link>
                         ))}
 
                         <div className="px-4 py-3 text-xs font-semibold uppercase text-slate-400">
