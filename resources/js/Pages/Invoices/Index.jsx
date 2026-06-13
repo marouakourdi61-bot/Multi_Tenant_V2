@@ -141,11 +141,38 @@ export default function Index({ invoices = [] }) {
                                                         </svg>
                                                     </button>
 
-                                                    <a href={`/invoices/${inv.id}/download`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg hover:bg-slate-100" title="Télécharger">
+                                                    <button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            try {
+                                                                const response = await fetch(`/invoices/${inv.id}/download`, {
+                                                                    headers: { Accept: 'application/pdf' },
+                                                                });
+
+                                                                if (!response.ok) {
+                                                                    throw new Error(`Erreur ${response.status}`);
+                                                                }
+
+                                                                const blob = await response.blob();
+                                                                const url = window.URL.createObjectURL(blob);
+                                                                const a = document.createElement('a');
+                                                                a.href = url;
+                                                                a.download = `invoice-${inv.id}.pdf`;
+                                                                document.body.appendChild(a);
+                                                                a.click();
+                                                                a.remove();
+                                                                window.URL.revokeObjectURL(url);
+                                                            } catch (error) {
+                                                                console.error(error);
+                                                            }
+                                                        }}
+                                                        className="p-2 rounded-lg hover:bg-slate-100"
+                                                        title="Télécharger"
+                                                    >
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v12m0 0l4-4m-4 4l-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" />
                                                         </svg>
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
