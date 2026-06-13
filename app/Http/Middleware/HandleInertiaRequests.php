@@ -36,11 +36,15 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
 
         $tenant = null;
+        $tenants = [];
+
         if ($user) {
             $tenant = $user->tenant;
             if (!$tenant) {
                 $tenant = $user->tenants()->latest()->first();
             }
+
+            $tenants = $user->tenants()->get();
         }
 
         return [
@@ -48,6 +52,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
                 'tenant' => $tenant,
+                'tenants' => $tenants,
             ],
         ];
     }

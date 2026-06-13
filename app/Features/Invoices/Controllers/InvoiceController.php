@@ -11,7 +11,7 @@ class InvoiceController extends Controller
     public function index()
     {
         return inertia('Invoices/Index', [
-            'invoices' => Invoice::latest()->get(),
+            'invoices' => Invoice::forCurrentTenant()->latest()->get(),
         ]);
     }
 

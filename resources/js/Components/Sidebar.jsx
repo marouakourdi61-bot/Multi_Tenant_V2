@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { ChevronDown, Check, Settings, Plus } from "lucide-react";
 
 export default function Sidebar() {
-
+    const [openOrg, setOpenOrg] = useState(false);
     const page = usePage();
     const auth = page.props?.auth ?? {};
 
@@ -18,44 +20,129 @@ export default function Sidebar() {
             </div>
 
             {/* Organization Card */}
-            <Link
-                href={route('tenants.create')}
-                className="mb-6 block rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100"
-            >
-                <div className="text-sm font-semibold text-slate-900">
-                    {auth.tenant?.name || "Créer une organisation"}
-                </div>
-                <div className="mt-1 text-xs text-slate-500">
-                    Workspace
-                </div>
-            </Link>
+            <div className="relative mb-6">
+
+                <button
+                    onClick={() => setOpenOrg(!openOrg)}
+                    className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:bg-slate-50"
+                >
+                    <div className="flex items-center justify-between">
+
+                        <div className="flex items-center gap-3">
+
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 font-semibold text-slate-700">
+                                {auth.tenant?.name?.charAt(0) || "N"}
+                            </div>
+
+                            <div>
+                                <div className="text-sm font-semibold text-slate-900">
+                                    {auth.tenant?.name || "Créer une organisation"}
+                                </div>
+
+                                <div className="text-xs text-slate-500">
+                                    Workspace
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <ChevronDown
+                            size={18}
+                            className={`transition ${openOrg ? "rotate-180" : ""
+                                }`}
+                        />
+
+                    </div>
+                </button>
+
+                {openOrg && (
+                    <div className="mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+
+                        {(auth.tenants || []).map((tenant) => (
+                            <div
+                                key={tenant.id}
+                                className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"
+                            >
+                                <div className="flex items-center gap-3">
+
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold">
+                                        {tenant.name.charAt(0)}
+                                    </div>
+
+                                    <span
+                                        className={
+                                            tenant.id === auth.tenant?.id
+                                                ? "font-medium text-indigo-600"
+                                                : "text-slate-700"
+                                        }
+                                    >
+                                        {tenant.name}
+                                    </span>
+
+                                </div>
+
+                                <div className="flex items-center gap-2">
+
+                                    {tenant.id === auth.tenant?.id && (
+                                        <Check
+                                            size={16}
+                                            className="text-indigo-600"
+                                        />
+                                    )}
+
+                                    <Settings
+                                        size={16}
+                                        className="text-slate-400"
+                                    />
+
+                                </div>
+                            </div>
+                        ))}
+
+                        <div className="px-4 py-3 text-xs font-semibold uppercase text-slate-400">
+                            ORGANISATIONS
+                        </div>
+
+                        <Link
+                            href={route("tenants.create")}
+                            className="flex items-center gap-3 border-t px-4 py-4 text-slate-700 hover:bg-slate-50"
+                        >
+                            <Plus size={18} />
+
+                            Créer une organisation
+                        </Link>
+
+                    </div>
+                )}
+
+            </div>
 
             {/* Navigation */}
             <nav className="flex flex-col gap-2 text-sm">
 
-                <Link 
-                    href={route('dashboard')} 
+                <Link
+                    href={route('dashboard')}
                     className="rounded-2xl bg-slate-900 px-4 py-3 font-medium text-white transition hover:bg-slate-800"
                 >
                     Dashboard
                 </Link>
 
-                <Link 
-                    href="/quotes" 
+                <Link
+                    href="/quotes"
                     className="rounded-2xl px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
                 >
                     Devis
                 </Link>
 
-                <Link 
-                    href={route('invoices.index')} 
+                <Link
+                    href={route('invoices.index')}
                     className="rounded-2xl px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
                 >
                     Factures
                 </Link>
 
-                <Link 
-                    href="/clients" 
+                <Link
+                    href="/clients"
                     className="rounded-2xl px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
                 >
                     Clients
@@ -68,8 +155,8 @@ export default function Sidebar() {
                     Facturation
                 </div>
 
-                <Link 
-                    href="/invoices" 
+                <Link
+                    href="/invoices"
                     className="rounded-2xl px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
                 >
                     Bons de livraison

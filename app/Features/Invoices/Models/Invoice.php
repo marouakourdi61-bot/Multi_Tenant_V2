@@ -31,4 +31,12 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeForCurrentTenant($query)
+    {
+        $tenantId = auth()->user()->tenant?->id
+            ?? auth()->user()->tenants()->latest()->value('id');
+
+        return $query->where('tenant_id', $tenantId);
+    }
 }
