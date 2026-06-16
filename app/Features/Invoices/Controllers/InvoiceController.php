@@ -112,7 +112,7 @@ class InvoiceController extends Controller
             'issue_date' => $data['issue_date'],
         ]);
 
-        return redirect()->route('invoices.show', $invoice->id);
+        return redirect()->route('invoices.index');
     }
 
     public function destroy($id)
