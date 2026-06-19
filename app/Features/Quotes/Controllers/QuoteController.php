@@ -106,6 +106,75 @@ class QuoteController extends Controller
         return redirect()->route('quotes.index');
     }
 
+    // Show edit form
+    public function edit(Quote $quote)
+    {
+        return Inertia::render('Quotes/Edit', [
+            'quote' => $quote,
+        ]);
+    }
+
+    // Update quote
+    public function update(Request $request, Quote $quote)
+    {
+        $data = $request->validate([
+            'recipient' => 'required|string',
+            'currency' => 'required|string',
+            'validity_days' => 'required|integer',
+            'vat' => 'boolean',
+            'items' => 'required|array',
+            'notes' => 'nullable|string',
+            'concluding_text' => 'nullable|string',
+            'terms_conditions' => 'nullable|string',
+            'footer_text' => 'nullable|string',
+            'general_discount' => 'nullable|numeric',
+            'general_discount_type' => 'nullable|string',
+            'issue_date' => 'required|date',
+            'status' => 'nullable|string',
+        ]);
+
+        $subtotal = 0;
+        foreach ($data['items'] as $item) {
+            $subtotal += (float) ($item['qty'] ?? 0) * (float) ($item['unit_price'] ?? 0);
+        }
+
+        $generalDiscount = 0;
+        $generalDiscountValue = (float) ($data['general_discount'] ?? 0);
+        if ($generalDiscountValue > 0) {
+            if ($data['general_discount_type'] === '%') {
+                $generalDiscount = $subtotal * ($generalDiscountValue / 100);
+            } else {
+                $generalDiscount = $generalDiscountValue;
+            }
+        }
+
+        $totalAfterDiscount = $subtotal - $generalDiscount;
+        $tax = !empty($data['vat']) ? 0 : $totalAfterDiscount * 0.20;
+        $total = $totalAfterDiscount + $tax;
+
+        $quote->update([
+            'recipient' => $data['recipient'],
+            'currency' => $data['currency'],
+            'validity_days' => $data['validity_days'],
+            'vat' => $data['vat'] ?? false,
+            'items' => $data['items'],
+            'notes' => $data['notes'] ?? null,
+            'concluding_text' => $data['concluding_text'] ?? null,
+            'terms_conditions' => $data['terms_conditions'] ?? null,
+            'footer_text' => $data['footer_text'] ?? null,
+            'general_discount' => $data['general_discount'] ?? 0,
+            'general_discount_type' => $data['general_discount_type'] ?? '%',
+            'subtotal' => $subtotal,
+            'tax_amount' => $tax,
+            'total' => $total,
+            'status' => $data['status'] ?? 'draft',
+            'issue_date' => $data['issue_date'],
+            'expiry_date' => Carbon::parse($data['issue_date'])->addDays((int) $data['validity_days']),
+        ]);
+
+        return redirect()->route('quotes.index');
+    }
+
     // Delete
     public function destroy(Quote $quote)
     {
