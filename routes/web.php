@@ -107,6 +107,9 @@ Route::middleware('auth')->group(function () {
     Route::match(['put', 'patch'], '/quotes/{quote}', [QuoteController::class, 'update'])
         ->name('quotes.update');
 
+    Route::get('/quotes/{quote}/download', [QuoteController::class, 'downloadPdf'])
+        ->name('quotes.download');
+
     Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])
         ->name('quotes.destroy');
 

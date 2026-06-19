@@ -175,6 +175,27 @@ class QuoteController extends Controller
         return redirect()->route('quotes.index');
     }
 
+    // Download PDF
+    public function downloadPdf(Quote $quote)
+    {
+        $html = view('quotes.pdf', ['quote' => $quote])->render();
+
+        if (class_exists('\Dompdf\Dompdf')) {
+            $dompdf = new \Dompdf\Dompdf();
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            return response()->streamDownload(function () use ($dompdf) {
+                echo $dompdf->output();
+            }, 'devis-' . $quote->quote_number . '.pdf', [
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+
+        return response($html);
+    }
+
     // Delete
     public function destroy(Quote $quote)
     {

@@ -47,6 +47,26 @@ export default function Index({ quotes = [] }) {
         }
     };
 
+    const handleDownload = async (quote) => {
+        try {
+            const response = await fetch(`/quotes/${quote.id}/download`, {
+                headers: { Accept: 'application/pdf' },
+            });
+            if (!response.ok) throw new Error(`Erreur ${response.status}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `devis-${quote.id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <DashboardLayout>
             <div className="space-y-6">
@@ -164,6 +184,18 @@ export default function Index({ quotes = [] }) {
                                                 {quote.currency || "MAD"}
                                             </span>
                                             <div className="flex items-center gap-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                {/* Download PDF */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDownload(quote)}
+                                                    className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                                                    title="Télécharger PDF"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v12m0 0l4-4m-4 4l-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" />
+                                                    </svg>
+                                                </button>
+                                                {/* Edit */}
                                                 <Link
                                                     href={`/quotes/${quote.id}/edit`}
                                                     className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700 transition-colors"
@@ -180,10 +212,9 @@ export default function Index({ quotes = [] }) {
                                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                                     </svg>
                                                 </Link>
+                                                {/* Delete */}
                                                 <button
-                                                    onClick={() =>
-                                                        handleDelete(quote)
-                                                    }
+                                                    onClick={() => handleDelete(quote)}
                                                     className="p-1.5 rounded-lg hover:bg-red-50 hover:text-red-500 transition-colors"
                                                     title="Supprimer"
                                                 >
