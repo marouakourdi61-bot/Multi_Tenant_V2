@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Tenant;
 use App\Features\Tenant\TenantController;
 use App\Features\invoices\Controllers\InvoiceController;
+use App\Features\Quotes\Controllers\QuoteController;
 
 
 Route::get('/', function () {
@@ -83,6 +84,38 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'downloadPdf'])
         ->name('invoices.download');
+
+
+
+        
+    // Quotes
+    Route::get('/quotes', [QuoteController::class, 'index'])
+        ->name('quotes.index');
+
+    Route::get('/quotes/create', [QuoteController::class, 'create'])
+        ->name('quotes.create');
+
+    Route::post('/quotes', [QuoteController::class, 'store'])
+        ->name('quotes.store');
+
+    Route::get('/quotes/{quote}', [QuoteController::class, 'show'])
+        ->name('quotes.show');
+
+    Route::get('/quotes/{quote}/edit', [QuoteController::class, 'edit'])
+        ->name('quotes.edit');
+
+    Route::match(['put', 'patch'], '/quotes/{quote}', [QuoteController::class, 'update'])
+        ->name('quotes.update');
+
+    Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])
+        ->name('quotes.destroy');
+
+
+
+
+
+
+
 
 
 
