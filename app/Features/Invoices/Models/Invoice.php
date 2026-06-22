@@ -4,6 +4,7 @@ namespace App\Features\Invoices\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Features\Clients\Models\Client;
 
 class Invoice extends Model
 {
@@ -30,6 +31,11 @@ class Invoice extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'recipient');
     }
 
     public function scopeForCurrentTenant($query)

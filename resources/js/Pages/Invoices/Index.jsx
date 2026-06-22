@@ -89,7 +89,7 @@ export default function Index({ invoices = [] }) {
                                             </td>
 
                                             <td className="px-6 py-4 text-slate-600">
-                                                {inv.recipient ?? inv.client_name ?? '-'}
+                                                {inv.client?.name ?? '-'}
                                             </td>
 
                                             <td className="px-6 py-4 font-medium text-slate-900">
@@ -113,7 +113,7 @@ export default function Index({ invoices = [] }) {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    
+
 
                                                     <Link href={`/invoices/${inv.id}/edit`} className="p-2 rounded-lg hover:bg-slate-100" title="Éditer">
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

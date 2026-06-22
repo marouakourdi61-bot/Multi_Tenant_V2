@@ -11,11 +11,16 @@ use Inertia\Inertia;
 class InvoiceController extends Controller
 {
     public function index()
-    {
-        return inertia('Invoices/Index', [
-            'invoices' => Invoice::forCurrentTenant()->latest()->get(),
-        ]);
-    }
+{
+    $invoices = Invoice::forCurrentTenant()
+        ->with('client')
+        ->latest()
+        ->get();
+
+    return inertia('Invoices/Index', [
+        'invoices' => $invoices,
+    ]);
+}
 
     public function create()
     {
