@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 
-export default function Create() {
+export default function Create({ clients = [] }) {
 
     const { data, setData, post, processing, errors } = useForm({
         recipient: '',
@@ -9,7 +9,7 @@ export default function Create() {
         currency: 'MAD',
         vat: false,
         items: [
-            
+
             {
                 qty: 1,
                 type: 'Service',
@@ -119,11 +119,22 @@ export default function Create() {
                                 <select
                                     className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
                                     value={data.recipient}
-                                    onChange={e => setData('recipient', e.target.value)}
+                                    onChange={(e) => setData("recipient", e.target.value)}
                                 >
-                                    <option value="">Select a recipient...</option>
-                                    <option>Client A</option>
-                                    <option>Client B</option>
+
+                                    <option value="">
+                                        Choisissez un client...
+                                    </option>
+
+                                    {clients.map((client) => (
+                                        <option
+                                            key={client.id}
+                                            value={client.id}
+                                        >
+                                            {client.name}
+                                        </option>
+                                    ))}
+
                                 </select>
                                 {errors.recipient && (
                                     <p className="mt-2 text-sm text-red-600">{errors.recipient}</p>

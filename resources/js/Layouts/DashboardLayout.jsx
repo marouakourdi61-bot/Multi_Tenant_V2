@@ -8,8 +8,8 @@ export default function DashboardLayout({ children }) {
             {/* Sidebar */}
             <Sidebar />
 
-            {/* Main area */}
-            <div className="flex flex-col flex-1 h-screen overflow-hidden">
+            {/* Main area - offset the fixed sidebar */}
+            <div className="flex flex-col flex-1 h-screen overflow-hidden" style={{ marginLeft: '260px' }}>
 
                 {/* Navbar */}
                 <Navbar />

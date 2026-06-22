@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Features\Tenant\TenantController;
 use App\Features\invoices\Controllers\InvoiceController;
 use App\Features\Quotes\Controllers\QuoteController;
+use App\Features\Clients\Controllers\ClientController;
 
 
 Route::get('/', function () {
@@ -87,7 +88,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-        
+
     // Quotes
     Route::get('/quotes', [QuoteController::class, 'index'])
         ->name('quotes.index');
@@ -114,6 +115,18 @@ Route::middleware('auth')->group(function () {
         ->name('quotes.destroy');
 
 
+
+
+
+    // Clients
+    Route::get('/clients', [ClientController::class, 'index'])
+        ->name('clients.index');
+
+    Route::get('/clients/create', [ClientController::class, 'create'])
+        ->name('clients.create');
+
+    Route::post('/clients', [ClientController::class, 'store'])
+        ->name('clients.store');
 
 
 

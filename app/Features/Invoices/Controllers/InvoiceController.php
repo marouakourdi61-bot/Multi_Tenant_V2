@@ -5,6 +5,8 @@ namespace App\Features\Invoices\Controllers;
 use App\Http\Controllers\Controller;
 use App\Features\Invoices\Models\Invoice;
 use Illuminate\Http\Request;
+use App\Features\Clients\Models\Client;
+use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
@@ -17,14 +19,28 @@ class InvoiceController extends Controller
 
     public function create()
     {
-        return inertia('Invoices/Create');
+        $tenantId = auth()->user()->tenant?->id
+            ?? auth()->user()->tenants()->latest()->value('id');
+
+        $clients = Client::query()
+            ->where(function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId)
+                    ->orWhereNull('tenant_id');
+            })
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Invoices/Create', [
+            'clients' => $clients,
+        ]);
     }
 
     public function store(Request $request)
     {
 
         $data = $request->validate([
-            'recipient' => 'required|string',
+            'recipient' => 'required|exists:clients,id',
             'currency' => 'required|string',
             'vat' => 'boolean',
             'items' => 'required|array',
