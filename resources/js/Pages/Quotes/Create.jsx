@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Link } from '@inertiajs/react';
 
-export default function Create() {
+export default function Create({ clients = [] }) {
     const { data, setData, post, processing, errors } = useForm({
         recipient: '',
         currency: 'MAD',
@@ -141,9 +141,9 @@ export default function Create() {
                             className="px-6 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 disabled:opacity-60"
                         >
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                                <polyline points="17 21 17 13 7 13 7 21"/>
-                                <polyline points="7 3 7 8 15 8"/>
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                                <polyline points="17 21 17 13 7 13 7 21" />
+                                <polyline points="7 3 7 8 15 8" />
                             </svg>
                             Enregistrer le devis
                         </button>
@@ -171,14 +171,23 @@ export default function Create() {
                             <select
                                 value={data.recipient}
                                 onChange={(e) => setData('recipient', e.target.value)}
-                                className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none appearance-none text-sm"
+                                className="w-full h-12 px-4 rounded-xl border border-gray-200"
                             >
-                                <option value="">Sélectionner un destinataire...</option>
-                                <option value="Acme Corp">Acme Corp</option>
-                                <option value="Global Dynamics">Global Dynamics</option>
+                                <option value="">
+                                    Sélectionner un destinataire...
+                                </option>
+
+                                {clients.map((client) => (
+                                    <option
+                                        key={client.id}
+                                        value={client.id}
+                                    >
+                                        {client.name}
+                                    </option>
+                                ))}
                             </select>
                             <svg className="absolute right-4 top-3.5 text-gray-400 pointer-events-none w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M6 9l6 6 6-6"/>
+                                <path d="M6 9l6 6 6-6" />
                             </svg>
                         </div>
                         {errors.recipient && <p className="text-sm text-red-600">{errors.recipient}</p>}
@@ -223,7 +232,7 @@ export default function Create() {
                                         <option>USD</option>
                                     </select>
                                     <svg className="absolute right-3 top-2.5 text-gray-400 pointer-events-none w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M6 9l6 6 6-6"/>
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </div>
                             </div>
@@ -252,7 +261,7 @@ export default function Create() {
                                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-all"
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                                    <circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" />
                                 </svg>
                                 Ajouter un article
                             </button>
@@ -285,7 +294,7 @@ export default function Create() {
                                                             title="Monter"
                                                         >
                                                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M18 15l-6-6-6 6"/>
+                                                                <path d="M18 15l-6-6-6 6" />
                                                             </svg>
                                                         </button>
                                                         <button
@@ -295,7 +304,7 @@ export default function Create() {
                                                             title="Descendre"
                                                         >
                                                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M6 9l6 6 6-6"/>
+                                                                <path d="M6 9l6 6 6-6" />
                                                             </svg>
                                                         </button>
                                                         <button
@@ -305,7 +314,7 @@ export default function Create() {
                                                             title="Supprimer"
                                                         >
                                                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M18 6L6 18M6 6l12 12"/>
+                                                                <path d="M18 6L6 18M6 6l12 12" />
                                                             </svg>
                                                         </button>
                                                         <button
@@ -315,7 +324,7 @@ export default function Create() {
                                                             title="Dupliquer"
                                                         >
                                                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                                                <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
                                                             </svg>
                                                         </button>
                                                     </div>
@@ -344,7 +353,7 @@ export default function Create() {
                                                                     <option>Produit</option>
                                                                 </select>
                                                                 <svg className="absolute right-3 top-3 text-gray-400 pointer-events-none w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                    <path d="M6 9l6 6 6-6"/>
+                                                                    <path d="M6 9l6 6 6-6" />
                                                                 </svg>
                                                             </div>
                                                         </div>
@@ -384,7 +393,7 @@ export default function Create() {
                                                                     <option>MAD</option>
                                                                 </select>
                                                                 <svg className="absolute right-1 top-3 text-gray-400 pointer-events-none w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                    <path d="M6 9l6 6 6-6"/>
+                                                                    <path d="M6 9l6 6 6-6" />
                                                                 </svg>
                                                             </div>
                                                         </div>
@@ -448,7 +457,7 @@ export default function Create() {
                                         <option>MAD</option>
                                     </select>
                                     <svg className="absolute right-2.5 top-3 text-gray-400 pointer-events-none w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M6 9l6 6 6-6"/>
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </div>
                             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Features\Quotes\Models\Quote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Features\Clients\Models\Client;
 use Inertia\Inertia;
 
 class QuoteController extends Controller
@@ -17,6 +18,7 @@ class QuoteController extends Controller
             'tenant_id',
             auth()->user()->tenant->id
         )
+            ->with('client')
             ->latest()
             ->get();
 
@@ -31,8 +33,22 @@ class QuoteController extends Controller
     // Page create
     public function create()
     {
+        $tenantId =
+            auth()->user()->tenant?->id
+            ??
+            auth()->user()->tenants()->latest()->value('id');
+
+        $clients = Client::query()
+            ->where('tenant_id', $tenantId)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render(
-            'Quotes/Create'
+            'Quotes/Create',
+            [
+                'clients' => $clients,
+            ]
         );
     }
 
@@ -40,7 +56,7 @@ class QuoteController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'recipient' => 'required|string',
+            'recipient' => 'required|exists:clients,id',
             'currency' => 'required|string',
             'validity_days' => 'required|integer',
             'vat' => 'boolean',
@@ -118,7 +134,7 @@ class QuoteController extends Controller
     public function update(Request $request, Quote $quote)
     {
         $data = $request->validate([
-            'recipient' => 'required|string',
+            'recipient' => 'required|exists:clients,id',
             'currency' => 'required|string',
             'validity_days' => 'required|integer',
             'vat' => 'boolean',

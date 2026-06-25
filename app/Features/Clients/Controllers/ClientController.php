@@ -30,9 +30,13 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request)
     {
-        Client::create(
-            $request->validated()
-        );
+        $tenantId = auth()->user()->tenant?->id
+            ?? auth()->user()->tenants()->latest()->value('id');
+
+        Client::create([
+            ...$request->validated(),
+            'tenant_id' => $tenantId,
+        ]);
 
         return redirect()
             ->route('clients.index')

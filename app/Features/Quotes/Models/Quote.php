@@ -3,6 +3,7 @@
 namespace App\Features\Quotes\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Features\Clients\Models\Client;
 use App\Models\Tenant;
 
 class Quote extends Model
@@ -40,4 +41,12 @@ class Quote extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function client()
+{
+    return $this->belongsTo(
+        Client::class,
+        'recipient'
+    );
+}
 }

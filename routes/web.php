@@ -10,6 +10,7 @@ use App\Features\Tenant\TenantController;
 use App\Features\invoices\Controllers\InvoiceController;
 use App\Features\Quotes\Controllers\QuoteController;
 use App\Features\Clients\Controllers\ClientController;
+use App\Features\Clients\Controllers\ClientEntrepriseController;
 
 
 Route::get('/', function () {
@@ -127,6 +128,46 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/clients', [ClientController::class, 'store'])
         ->name('clients.store');
+
+
+
+    // Clients Entreprises
+
+    Route::get(
+        '/clients/entreprises',
+        [ClientEntrepriseController::class, 'index']
+    )->name('entreprises.index');
+
+    Route::get(
+        '/clients/entreprises/create',
+        [ClientEntrepriseController::class, 'create']
+    )->name('entreprises.create');
+
+    Route::post(
+        '/clients/entreprises',
+        [ClientEntrepriseController::class, 'store']
+    )->name('entreprises.store');
+
+    Route::get(
+        '/clients/entreprises/{client}',
+        [ClientEntrepriseController::class, 'show']
+    )->name('entreprises.show');
+
+    Route::get(
+        '/clients/entreprises/{client}/edit',
+        [ClientEntrepriseController::class, 'edit']
+    )->name('entreprises.edit');
+
+    Route::match(
+        ['put', 'patch'],
+        '/clients/entreprises/{client}',
+        [ClientEntrepriseController::class, 'update']
+    )->name('entreprises.update');
+
+    Route::delete(
+        '/clients/entreprises/{client}',
+        [ClientEntrepriseController::class, 'destroy']
+    )->name('entreprises.destroy');
 
 
 

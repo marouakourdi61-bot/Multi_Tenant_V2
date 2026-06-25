@@ -165,7 +165,7 @@ export default function Index({ quotes = [] }) {
                                                 {quote.quote_number}
                                             </h3>
                                             <p className="text-sm text-gray-500">
-                                                {quote.recipient || "—"}
+                                                {quote.client?.name ?? "-"}
                                             </p>
                                         </div>
                                         {getStatusBadge(quote.status)}
