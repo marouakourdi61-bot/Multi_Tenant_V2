@@ -12,19 +12,20 @@ class ClientEntrepriseController extends Controller
 {
     public function index()
     {
-        $tenantId =
-            auth()->user()->tenant?->id;
+        $companies =
+            ClientEntreprise::query()
+                ->where(
+                    'tenant_id',
+                    auth()->user()->tenant->id
+                )
+                ->withCount('invoices')
+                ->latest()
+                ->get();
 
         return Inertia::render(
             'Clients/Entreprises/Index',
             [
-                'clients' =>
-                    ClientEntreprise::where(
-                        'tenant_id',
-                        $tenantId
-                    )
-                    ->latest()
-                    ->get()
+                'companies' => $companies
             ]
         );
     }
@@ -85,56 +86,56 @@ class ClientEntrepriseController extends Controller
         return back();
     }
 
+
+    public function edit(ClientEntreprise $company)
+    {
+        return Inertia::render(
+            'Clients/Entreprises/Edit',
+            [
+                'company' => $company,
+            ]
+        );
+    }
+
     public function update(
         Request $request,
-        ClientEntreprise $client
+        ClientEntreprise $company
     ) {
 
-        $validated =
-            $request->validate([
+        $data = $request->validate([
 
-                'name' =>
-                    'required|string',
+            'name' => 'required',
 
-                'email' =>
-                    'nullable|email',
+            'email' => 'nullable',
 
-                'phone' =>
-                    'nullable|string',
+            'phone' => 'nullable',
 
-                'address' =>
-                    'nullable|string',
+            'address' => 'nullable',
 
-                'city' =>
-                    'nullable|string',
+            'city' => 'nullable',
 
-                'postal_code' =>
-                    'nullable|string',
+            'postal_code' => 'nullable',
 
-                'country' =>
-                    'nullable|string',
+            'country' => 'nullable',
 
-                'ice' =>
-                    'nullable|string',
+            'ice' => 'nullable',
 
-                'rc' =>
-                    'nullable|string',
+            'rc' => 'nullable',
 
-                'if_number' =>
-                    'nullable|string',
+            'if_number' => 'nullable',
 
-                'cnss' =>
-                    'nullable|string',
+            'cnss' => 'nullable',
 
-                'notes' =>
-                    'nullable|string',
-            ]);
+            'notes' => 'nullable',
 
-        $client->update(
-            $validated
-        );
+        ]);
 
-        return back();
+        $company->update($data);
+
+        return redirect()
+            ->route(
+                'entreprises.index'
+            );
     }
 
     public function destroy(

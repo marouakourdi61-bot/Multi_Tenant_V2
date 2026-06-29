@@ -3,6 +3,7 @@
 namespace App\Features\Clients\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Features\Invoices\Models\Invoice;
 
 class ClientEntreprise extends Model
 {
@@ -37,4 +38,13 @@ class ClientEntreprise extends Model
 
         'notes',
     ];
+
+    public function invoices()
+    {
+        return $this->hasMany(
+            Invoice::class,
+            'recipient',
+            'id'
+        );
+    }
 }

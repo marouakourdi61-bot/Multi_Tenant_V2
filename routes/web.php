@@ -11,6 +11,7 @@ use App\Features\invoices\Controllers\InvoiceController;
 use App\Features\Quotes\Controllers\QuoteController;
 use App\Features\Clients\Controllers\ClientController;
 use App\Features\Clients\Controllers\ClientEntrepriseController;
+use App\Features\Clients\Controllers\FournisseurController;
 
 
 Route::get('/', function () {
@@ -149,25 +150,33 @@ Route::middleware('auth')->group(function () {
     )->name('entreprises.store');
 
     Route::get(
-        '/clients/entreprises/{client}',
+        '/clients/entreprises/{company}',
         [ClientEntrepriseController::class, 'show']
     )->name('entreprises.show');
 
     Route::get(
-        '/clients/entreprises/{client}/edit',
+        '/clients/entreprises/{company}/edit',
         [ClientEntrepriseController::class, 'edit']
     )->name('entreprises.edit');
 
     Route::match(
         ['put', 'patch'],
-        '/clients/entreprises/{client}',
+        '/clients/entreprises/{company}',
         [ClientEntrepriseController::class, 'update']
     )->name('entreprises.update');
 
     Route::delete(
-        '/clients/entreprises/{client}',
+        '/clients/entreprises/{company}',
         [ClientEntrepriseController::class, 'destroy']
     )->name('entreprises.destroy');
+
+
+// Fournisseur
+
+    Route::resource(
+        'fournisseurs',
+        FournisseurController::class
+    );
 
 
 

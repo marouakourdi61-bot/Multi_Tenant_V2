@@ -218,58 +218,68 @@ export default function Sidebar() {
                     </span>
                 </Link>
 
-                {/* CLIENTS */}
-                <div>
+               {/* CLIENTS */}
+<div>
 
-                    <button
-                        onClick={() =>
-                            toggle(
-                                "clients"
-                            )
-                        }
-                        className={itemClass(
-                            "/clients"
-                        )}
-                    >
-                        <Users size={18} />
+    <button
+        onClick={() =>
+            toggle(
+                "clients"
+            )
+        }
+        className={itemClass(
+            "/clients"
+        )}
+    >
+        <Users size={18} />
 
-                        <span className="ml-3 flex-1 text-left font-semibold">
-                            Clients
-                        </span>
+        <span className="ml-3 flex-1 text-left font-semibold">
+            Clients
+        </span>
 
-                        <ChevronDown
-                            size={16}
-                            className={
-                                menus.clients
-                                    ? "rotate-180"
-                                    : ""
-                            }
-                        />
-                    </button>
+        <ChevronDown
+            size={16}
+            className={
+                menus.clients
+                    ? "rotate-180"
+                    : ""
+            }
+        />
 
-                    {menus.clients && (
-                        <div className="space-y-1">
+    </button>
 
-                            {subItem(
-                                route("clients.index"),
-                                "Particuliers"
-                            )}
+    {
+        menus.clients && (
 
-                            {subItem(
-                                "/clients/companies",
-                                "Entreprises"
-                            )}
+            <div className="space-y-1">
 
-                            {subItem(
-                                "/suppliers",
-                                "Fournisseurs"
-                            )}
+                {subItem(
+                    route(
+                        "clients.index"
+                    ),
+                    "Particuliers"
+                )}
 
-                        </div>
-                    )}
+                {subItem(
+                    route(
+                        "entreprises.index"
+                    ),
+                    "Entreprises"
+                )}
 
-                </div>
+                {subItem(
+                    route(
+                        "fournisseurs.index"
+                    ),
+                    "Fournisseurs"
+                )}
 
+            </div>
+
+        )
+    }
+
+</div>
                 {/* FACTURATION */}
                 <div>
 
