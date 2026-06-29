@@ -12,6 +12,7 @@ use App\Features\Quotes\Controllers\QuoteController;
 use App\Features\Clients\Controllers\ClientController;
 use App\Features\Clients\Controllers\ClientEntrepriseController;
 use App\Features\Clients\Controllers\FournisseurController;
+use App\Features\Depenses\Controllers\ExpenseController;
 
 
 Route::get('/', function () {
@@ -177,6 +178,14 @@ Route::middleware('auth')->group(function () {
         'fournisseurs',
         FournisseurController::class
     );
+
+
+//Dépenses
+
+    Route::resource(
+    'expenses',
+    ExpenseController::class
+);
 
 
 

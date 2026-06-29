@@ -10,24 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('fournisseurs', function ($table) {
-
-            $table
-                ->foreignId('tenant_id')
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('tenant_id')
                 ->nullable()
                 ->constrained()
-                ->cascadeOnDelete();
-
+                ->nullOnDelete();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('fournisseurs', function (Blueprint $table) {
-            //
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('tenant_id');
         });
     }
 };

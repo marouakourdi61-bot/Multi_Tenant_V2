@@ -12,15 +12,28 @@ class ClientController extends Controller
 {
     public function index()
     {
+        $tenantId =
+            auth()->user()->tenant?->id
+            ?? auth()->user()->tenants()->latest()->value('id');
+
         return Inertia::render(
             'Clients/Particuliers/Index',
             [
-                'clients' => Client::withCount('invoices')
-                    ->latest()
-                    ->get()
+                'clients' =>
+                    Client::withCount('invoices')
+
+                        ->where(
+                            'tenant_id',
+                            $tenantId
+                        )
+
+                        ->latest()
+
+                        ->get(),
             ]
         );
     }
+
     public function create()
     {
         return Inertia::render(
@@ -28,18 +41,26 @@ class ClientController extends Controller
         );
     }
 
-    public function store(StoreClientRequest $request)
-    {
-        $tenantId = auth()->user()->tenant?->id
+    public function store(
+        StoreClientRequest $request
+    ) {
+
+        $tenantId =
+            auth()->user()->tenant?->id
             ?? auth()->user()->tenants()->latest()->value('id');
 
         Client::create([
+
             ...$request->validated(),
+
             'tenant_id' => $tenantId,
+
         ]);
 
         return redirect()
-            ->route('clients.index')
+            ->route(
+                'clients.index'
+            )
             ->with(
                 'success',
                 'Client créé avec succès'

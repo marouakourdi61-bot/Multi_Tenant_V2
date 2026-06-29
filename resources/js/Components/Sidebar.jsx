@@ -218,68 +218,81 @@ export default function Sidebar() {
                     </span>
                 </Link>
 
-               {/* CLIENTS */}
-<div>
+                <Link
+                    href={route("expenses.index")}
+                    className={itemClass(
+                        "/expenses"
+                    )}
+                >
+                    <Users size={18} />
 
-    <button
-        onClick={() =>
-            toggle(
-                "clients"
-            )
-        }
-        className={itemClass(
-            "/clients"
-        )}
-    >
-        <Users size={18} />
+                    <span className="ml-3">
+                        Dépenses
+                    </span>
+                </Link>
 
-        <span className="ml-3 flex-1 text-left font-semibold">
-            Clients
-        </span>
+                {/* CLIENTS */}
+                <div>
 
-        <ChevronDown
-            size={16}
-            className={
-                menus.clients
-                    ? "rotate-180"
-                    : ""
-            }
-        />
+                    <button
+                        onClick={() =>
+                            toggle(
+                                "clients"
+                            )
+                        }
+                        className={itemClass(
+                            "/clients"
+                        )}
+                    >
+                        <Users size={18} />
 
-    </button>
+                        <span className="ml-3 flex-1 text-left font-semibold">
+                            Clients
+                        </span>
 
-    {
-        menus.clients && (
+                        <ChevronDown
+                            size={16}
+                            className={
+                                menus.clients
+                                    ? "rotate-180"
+                                    : ""
+                            }
+                        />
 
-            <div className="space-y-1">
+                    </button>
 
-                {subItem(
-                    route(
-                        "clients.index"
-                    ),
-                    "Particuliers"
-                )}
+                    {
+                        menus.clients && (
 
-                {subItem(
-                    route(
-                        "entreprises.index"
-                    ),
-                    "Entreprises"
-                )}
+                            <div className="space-y-1">
 
-                {subItem(
-                    route(
-                        "fournisseurs.index"
-                    ),
-                    "Fournisseurs"
-                )}
+                                {subItem(
+                                    route(
+                                        "clients.index"
+                                    ),
+                                    "Particuliers"
+                                )}
 
-            </div>
+                                {subItem(
+                                    route(
+                                        "entreprises.index"
+                                    ),
+                                    "Entreprises"
+                                )}
 
-        )
-    }
+                                {subItem(
+                                    route(
+                                        "fournisseurs.index"
+                                    ),
+                                    "Fournisseurs"
+                                )}
 
-</div>
+                            </div>
+
+                        )
+                    }
+
+                </div>
                 {/* FACTURATION */}
                 <div>
 
