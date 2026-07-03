@@ -182,10 +182,15 @@ Route::middleware('auth')->group(function () {
 
 //Dépenses
 
-    Route::resource(
-    'expenses',
-    ExpenseController::class
-);
+    Route::match(
+        ['put', 'patch', 'post'],
+        '/expenses/{expense}/month',
+        [ExpenseController::class, 'updateMonth']
+    )->name('expenses.month.update');
+
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
 
 
 

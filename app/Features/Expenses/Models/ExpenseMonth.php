@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Features\Expenses\Models;
 
+use App\Features\Expenses\Models\Expense;
 use Illuminate\Database\Eloquent\Model;
 
 class ExpenseMonth extends Model

@@ -149,52 +149,109 @@ export default function Create() {
 
                     {/* Montant kayban ghir Fixe */}
                     {form.recurrence === "fixed" && (
-                        <div>
+    <>
+        {/* Montant mensuel */}
+        <div>
 
-                            <label className="block text-xs uppercase font-bold text-slate-500 mb-3">
-                                Montant mensuel (MAD)
-                            </label>
+            <label className="block text-xs uppercase font-bold text-slate-500 mb-3">
+                Montant mensuel (MAD)
+            </label>
 
-                            <div className="relative">
+            <div className="relative">
 
-                                <span className="absolute left-4 top-4 text-slate-500">
-                                    MAD
-                                </span>
+                <span className="absolute left-4 top-4 text-slate-500">
+                    MAD
+                </span>
 
-                                <input
-                                    value={form.monthly_amount}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            monthly_amount:
-                                                e.target.value,
-                                        })
-                                    }
-                                    type="number"
-                                    className="
-                                        w-full
-                                        rounded-2xl
-                                        border
-                                        py-4
-                                        pl-16
-                                        pr-5
-                                        text-right
-                                        text-xl
-                                        font-semibold
-                                        outline-none
-                                        focus:ring-2
-                                        focus:ring-indigo-500
-                                    "
-                                    placeholder="0.00"
-                                />
-                            </div>
+                <input
+                    value={form.monthly_amount}
+                    onChange={(e) =>
+                        setForm({
+                            ...form,
+                            monthly_amount: e.target.value,
+                        })
+                    }
+                    type="number"
+                    className="
+                        w-full
+                        rounded-2xl
+                        border
+                        py-4
+                        pl-16
+                        pr-5
+                        text-right
+                        text-xl
+                        font-semibold
+                        outline-none
+                        focus:ring-2
+                        focus:ring-indigo-500
+                    "
+                    placeholder="0.00"
+                />
 
-                            <p className="mt-3 text-sm text-slate-500">
-                                Montant fixe appliqué chaque mois.
-                            </p>
+            </div>
 
+            <p className="mt-3 text-sm text-slate-500">
+                Montant fixe appliqué chaque mois.
+            </p>
+
+        </div>
+
+        {/* Tableau des mois */}
+        <div>
+
+            <label className="block text-xs uppercase font-bold text-slate-500 mb-3">
+                Montants par mois
+            </label>
+
+            <div className="grid grid-cols-3 gap-3">
+
+                {[
+                    "Jan",
+                    "Fév",
+                    "Mar",
+                    "Avr",
+                    "Mai",
+                    "Juin",
+                    "Juil",
+                    "Août",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Déc",
+                ].map((month) => (
+
+                    <div key={month} className="space-y-2">
+
+                        <div className="text-center text-sm font-semibold">
+                            {month}
                         </div>
-                    )}
+
+                        <input
+                            type="number"
+                            placeholder="0"
+                            className="
+                                w-full
+                                rounded-xl
+                                border
+                                px-3
+                                py-2
+                                text-center
+                                outline-none
+                                focus:ring-2
+                                focus:ring-indigo-500
+                            "
+                        />
+
+                    </div>
+
+                ))}
+
+            </div>
+
+        </div>
+    </>
+)}
                 </form>
 
                 {/* Footer */}

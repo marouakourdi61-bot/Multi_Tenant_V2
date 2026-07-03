@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Features\Expenses\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Features\Expenses\Models\ExpenseMonth;
+use App\Models\Tenant;
 
 class Expense extends Model
 {
@@ -19,6 +21,7 @@ class Expense extends Model
             ExpenseMonth::class
         );
     }
+    
 
     public function tenant()
     {
