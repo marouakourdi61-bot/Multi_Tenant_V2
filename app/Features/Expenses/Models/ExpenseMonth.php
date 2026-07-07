@@ -14,6 +14,12 @@ class ExpenseMonth extends Model
         'amount',
     ];
 
+    protected $casts = [
+        'year' => 'integer',
+        'month' => 'integer',
+        'amount' => 'decimal:2',
+    ];
+
     public function expense()
     {
         return $this->belongsTo(

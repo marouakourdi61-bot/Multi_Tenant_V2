@@ -1,0 +1,3 @@
+{"sessionId":"0dece9","location":"Index.jsx:saveEdit","message":"Inline edit payload","data":{"expenseId":3,"updatePayload":{"year":2026,"month":4,"amount":100,"_method":"put"}},"timestamp":1783340795171,"hypothesisId":"H5"}
+{"sessionId":"0dece9","location":"Create.jsx:submit","message":"Form payload before POST","data":{"payload":{"name":"test","recurrence":"variable","monthly_amount":null},"formState":{"name":"test","recurrence":"variable","monthly_amount":""}},"timestamp":1783341098937,"hypothesisId":"H1"}
+{"sessionId":"0dece9","location":"Index.jsx:saveEdit","message":"Inline edit payload","data":{"expenseId":13,"updatePayload":{"year":2026,"month":3,"amount":100,"_method":"put"}},"timestamp":1783341105760,"hypothesisId":"H5"}

@@ -12,14 +12,16 @@ export default function Create() {
     const submit = (e) => {
         e.preventDefault();
 
-        router.post("/expenses", {
+        const payload = {
             name: form.name,
             recurrence: form.recurrence,
             monthly_amount:
                 form.recurrence === "fixed"
                     ? form.monthly_amount
                     : null,
-        });
+        };
+
+        router.post("/expenses", payload);
     };
 
     return (
@@ -191,65 +193,11 @@ export default function Create() {
 
             </div>
 
-            <p className="mt-3 text-sm text-slate-500">
-                Montant fixe appliqué chaque mois.
-            </p>
+            
 
         </div>
 
-        {/* Tableau des mois */}
-        <div>
-
-            <label className="block text-xs uppercase font-bold text-slate-500 mb-3">
-                Montants par mois
-            </label>
-
-            <div className="grid grid-cols-3 gap-3">
-
-                {[
-                    "Jan",
-                    "Fév",
-                    "Mar",
-                    "Avr",
-                    "Mai",
-                    "Juin",
-                    "Juil",
-                    "Août",
-                    "Sep",
-                    "Oct",
-                    "Nov",
-                    "Déc",
-                ].map((month) => (
-
-                    <div key={month} className="space-y-2">
-
-                        <div className="text-center text-sm font-semibold">
-                            {month}
-                        </div>
-
-                        <input
-                            type="number"
-                            placeholder="0"
-                            className="
-                                w-full
-                                rounded-xl
-                                border
-                                px-3
-                                py-2
-                                text-center
-                                outline-none
-                                focus:ring-2
-                                focus:ring-indigo-500
-                            "
-                        />
-
-                    </div>
-
-                ))}
-
-            </div>
-
-        </div>
+       
     </>
 )}
                 </form>

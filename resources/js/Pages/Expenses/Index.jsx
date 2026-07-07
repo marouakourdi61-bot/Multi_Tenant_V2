@@ -7,14 +7,17 @@ const MONTHS = [
     "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc",
 ];
 
-export default function Index({ expenses = [] }) {
+export default function Index({ expenses = [], invoices = [] }) {
+
+    // console.log(expenses);
+    
     const [editingCell, setEditingCell] = useState(null);
     const [editValue, setEditValue] = useState("");
     const year = 2026;
 
     function getAmount(expense, monthIndex) {
         const month = expense.months?.find(
-            (m) => m.month === monthIndex + 1 && m.year === year
+            (m) => m.month === monthIndex + 1 && Number(m.year) === year
         );
         return month ? Number(month.amount) : 0;
     }
@@ -22,7 +25,7 @@ export default function Index({ expenses = [] }) {
     function getRowTotal(expense) {
         if (!expense.months) return 0;
         return expense.months
-            .filter((m) => m.year === year)
+            .filter((m) => Number(m.year) === year)
             .reduce((sum, m) => sum + Number(m.amount), 0);
     }
 
@@ -30,11 +33,32 @@ export default function Index({ expenses = [] }) {
         return expenses.reduce((sum, exp) => sum + getAmount(exp, monthIndex), 0);
     }
 
-    const grandTotal = expenses.reduce((sum, exp) => sum + getRowTotal(exp), 0);
+    function getRevenueForMonth(monthIndex) {
+        return invoices
+            .filter((inv) => {
+                const date = new Date(inv.issue_date);
+                return date.getMonth() === monthIndex && date.getFullYear() === year;
+            })
+            .reduce((sum, inv) => sum + Number(inv.total), 0);
+    }
 
-    function startEdit(expenseId, monthIndex, currentValue) {
-        setEditingCell({ expenseId, month: monthIndex });
-        setEditValue(currentValue.toString());
+    function getNetForMonth(monthIndex) {
+        return getRevenueForMonth(monthIndex) - getColumnTotal(monthIndex);
+    }
+
+    const grandTotal = expenses.reduce((sum, exp) => sum + getRowTotal(exp), 0);
+    const totalRevenue = invoices
+        .filter((inv) => new Date(inv.issue_date).getFullYear() === year)
+        .reduce((sum, inv) => sum + Number(inv.total), 0);
+    const netTotal = totalRevenue - grandTotal;
+
+    function startEdit(expense, monthIndex, currentValue) {
+        setEditingCell({ expenseId: expense.id, month: monthIndex });
+        // Si la cellule est vide et que c'est une dépense fixe, proposer le montant mensuel par défaut
+        const defaultValue = currentValue === 0 && expense.recurrence === "fixed"
+            ? Number(expense.amount)
+            : currentValue;
+        setEditValue(defaultValue.toString());
     }
 
     function saveEdit() {
@@ -105,7 +129,7 @@ export default function Index({ expenses = [] }) {
                                 </div>
                             </div>
                             <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-500">
-                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}></span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-red-500">
@@ -119,10 +143,12 @@ export default function Index({ expenses = [] }) {
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <span className="text-xs font-bold uppercase text-green-600 tracking-wider">Total des revenus</span>
-                                <div className="text-3xl font-bold text-gray-900 mt-1">0,00 MAD</div>
+                                <div className="text-3xl font-bold text-gray-900 mt-1">
+                                    {totalRevenue.toLocaleString()} MAD
+                                </div>
                             </div>
                             <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600">
-                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>trending_up</span>
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}></span>
                             </div>
                         </div>
                         <div className="absolute bottom-0 left-0 w-full h-1 bg-green-600 opacity-10"></div>
@@ -132,15 +158,15 @@ export default function Index({ expenses = [] }) {
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <span className="text-xs font-bold uppercase text-indigo-600 tracking-wider">Épargne nette</span>
-                                <div className={`text-3xl font-bold mt-1 ${grandTotal > 0 ? 'text-red-500' : 'text-green-600'}`}>
-                                    {(-grandTotal).toLocaleString()} MAD
+                                <div className={`text-3xl font-bold mt-1 ${netTotal > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                    {netTotal.toLocaleString()} MAD
                                 </div>
                             </div>
                             <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
-                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>savings</span>
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}></span>
                             </div>
                         </div>
-                        <div className={`absolute bottom-0 left-0 w-full h-1 ${grandTotal > 0 ? 'bg-red-500' : 'bg-indigo-600'} opacity-10`}></div>
+                        <div className={`absolute bottom-0 left-0 w-full h-1 ${netTotal >= 0 ? 'bg-indigo-600' : 'bg-red-500'} opacity-10`}></div>
                     </div>
                 </div>
 
@@ -185,11 +211,11 @@ export default function Index({ expenses = [] }) {
                                             <td
                                                 key={monthIdx}
                                                 className="p-1 text-center border-r border-gray-50 cursor-cell"
-                                                onClick={() => {
-                                                    if (!isEditing(expense.id, monthIdx)) {
-                                                        startEdit(expense.id, monthIdx, getAmount(expense, monthIdx));
-                                                    }
-                                                }}
+                                                    onClick={() => {
+                                                        if (!isEditing(expense.id, monthIdx)) {
+                                                            startEdit(expense, monthIdx, getAmount(expense, monthIdx));
+                                                        }
+                                                    }}
                                             >
                                                 {isEditing(expense.id, monthIdx) ? (
                                                     <input
@@ -235,15 +261,15 @@ export default function Index({ expenses = [] }) {
                             <tfoot>
                                 <tr className="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
                                     <td className="p-3 sticky left-0 bg-gray-100 z-10 border-r border-gray-200">
-                                        Total par mois
+                                        Net (Revenus − Dépenses)
                                     </td>
                                     {MONTHS.map((_, monthIdx) => (
-                                        <td key={monthIdx} className="p-3 text-center border-r border-gray-200">
-                                            {getColumnTotal(monthIdx).toFixed(2)}
+                                        <td key={monthIdx} className={`p-3 text-center border-r border-gray-200 ${getNetForMonth(monthIdx) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                            {getNetForMonth(monthIdx).toFixed(2)}
                                         </td>
                                     ))}
-                                    <td className="p-3 text-center text-indigo-600 sticky right-0 bg-gray-100 border-l border-gray-200">
-                                        {grandTotal.toFixed(2)}
+                                    <td className={`p-3 text-center sticky right-0 bg-gray-100 border-l border-gray-200 ${netTotal >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                        {netTotal.toFixed(2)}
                                     </td>
                                 </tr>
                             </tfoot>

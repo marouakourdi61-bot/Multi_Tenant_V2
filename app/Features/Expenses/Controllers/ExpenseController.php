@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Features\Expenses\Models\Expense;
 use App\Features\Expenses\Models\ExpenseMonth;
+use App\Features\Invoices\Models\Invoice;
 
 use App\Features\Expenses\Requests\StoreExpenseRequest;
 
@@ -26,10 +27,15 @@ class ExpenseController extends Controller
                 )
                 ->get();
 
+        $invoices = Invoice::forCurrentTenant()
+            ->where('status', 'paid')
+            ->get(['total', 'issue_date']);
+
         return inertia(
             'Expenses/Index',
             [
-                'expenses' => $expenses
+                'expenses' => $expenses,
+                'invoices' => $invoices,
             ]
         );
     }
@@ -44,24 +50,16 @@ class ExpenseController extends Controller
     public function store(
         StoreExpenseRequest $request
     ) {
+        $amount = $request->filled('monthly_amount')
+            ? (float) $request->monthly_amount
+            : 0;
+
         $expense = Expense::create([
             'tenant_id' => auth()->user()->tenant?->id,
             'name' => $request->name,
             'recurrence' => $request->recurrence,
+            'amount' => $amount,
         ]);
-
-        // Si c'est une dépense fixe, créer les 12 mois automatiquement
-        if ($request->recurrence === 'fixed') {
-            $amount = $request->monthly_amount ?? 0;
-            for ($month = 1; $month <= 12; $month++) {
-                ExpenseMonth::create([
-                    'expense_id' => $expense->id,
-                    'year' => now()->year,
-                    'month' => $month,
-                    'amount' => $amount,
-                ]);
-            }
-        }
 
         return redirect()
             ->route('expenses.index');
@@ -75,6 +73,10 @@ class ExpenseController extends Controller
             'amount' => 'nullable|numeric|min:0',
         ]);
 
+        $amount = $request->filled('amount')
+            ? (float) $request->amount
+            : 0;
+
         ExpenseMonth::updateOrCreate(
             [
                 'expense_id' => $expense->id,
@@ -82,7 +84,7 @@ class ExpenseController extends Controller
                 'month' => $request->month,
             ],
             [
-                'amount' => $request->amount ?? 0,
+                'amount' => $amount,
             ]
         );
 
