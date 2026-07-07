@@ -48,18 +48,34 @@ class InvoiceController extends Controller
             'recipient' => 'required|exists:clients,id',
             'currency' => 'required|string',
             'vat' => 'boolean',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'discount_type' => 'nullable|string|in:%,fixed',
             'items' => 'required|array',
             'notes' => 'nullable|string',
             'concluding_text' => 'nullable|string',
             'issue_date' => 'required|date',
         ]);
 
-        $total = 0;
-
+        $subtotal = 0;
         foreach ($data['items'] as $item) {
-            $lineTotal = $item['qty'] * $item['unit_price'];
-            $total += $lineTotal;
+            $lineTotal = ($item['qty'] ?? 0) * ($item['unit_price'] ?? 0);
+            $subtotal += $lineTotal;
         }
+
+        // Calcul de la remise
+        $discount = (float) ($data['discount'] ?? 0);
+        $discountType = $data['discount_type'] ?? '%';
+        $discountAmount = $discountType === '%'
+            ? $subtotal * ($discount / 100)
+            : $discount;
+
+        $afterDiscount = $subtotal - $discountAmount;
+
+        // Calcul TVA (20% si vat est false = TVA applicable)
+        $vatEnabled = !($data['vat'] ?? false);
+        $taxAmount = $vatEnabled ? $afterDiscount * 0.20 : 0;
+
+        $totalTtc = $afterDiscount + $taxAmount;
 
         $tenantId = auth()->user()->tenant?->id
             ?? auth()->user()->tenants()->latest()->value('id');
@@ -70,10 +86,15 @@ class InvoiceController extends Controller
             'recipient' => $data['recipient'],
             'currency' => $data['currency'],
             'vat' => $data['vat'],
+            'discount' => $discount,
+            'discount_type' => $discountType,
             'items' => $data['items'],
             'notes' => $data['notes'],
             'concluding_text' => $data['concluding_text'],
-            'total' => $total,
+            'total' => $subtotal,
+            'subtotal' => $subtotal,
+            'tax_amount' => $taxAmount,
+            'total_ttc' => $totalTtc,
             'status' => 'draft',
             'issue_date' => $data['issue_date'],
             'due_date' => now()->addDays(7),
@@ -108,6 +129,8 @@ class InvoiceController extends Controller
             'recipient' => 'required|string',
             'currency' => 'required|string',
             'vat' => 'boolean',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'discount_type' => 'nullable|string|in:%,fixed',
             'items' => 'required|array',
             'notes' => 'nullable|string',
             'concluding_text' => 'nullable|string',
@@ -115,20 +138,40 @@ class InvoiceController extends Controller
             'status' => 'required|string',
         ]);
 
-        $total = 0;
+        $subtotal = 0;
         foreach ($data['items'] as $item) {
-            $lineTotal = $item['qty'] * $item['unit_price'];
-            $total += $lineTotal;
+            $lineTotal = ($item['qty'] ?? 0) * ($item['unit_price'] ?? 0);
+            $subtotal += $lineTotal;
         }
+
+        // Calcul de la remise
+        $discount = (float) ($data['discount'] ?? 0);
+        $discountType = $data['discount_type'] ?? '%';
+        $discountAmount = $discountType === '%'
+            ? $subtotal * ($discount / 100)
+            : $discount;
+
+        $afterDiscount = $subtotal - $discountAmount;
+
+        // Calcul TVA (20% si vat est false = TVA applicable)
+        $vatEnabled = !($data['vat'] ?? false);
+        $taxAmount = $vatEnabled ? $afterDiscount * 0.20 : 0;
+
+        $totalTtc = $afterDiscount + $taxAmount;
 
         $invoice->update([
             'recipient' => $data['recipient'],
             'currency' => $data['currency'],
             'vat' => $data['vat'],
+            'discount' => $discount,
+            'discount_type' => $discountType,
             'items' => $data['items'],
             'notes' => $data['notes'],
             'concluding_text' => $data['concluding_text'],
-            'total' => $total,
+            'total' => $subtotal,
+            'subtotal' => $subtotal,
+            'tax_amount' => $taxAmount,
+            'total_ttc' => $totalTtc,
             'status' => $data['status'],
             'issue_date' => $data['issue_date'],
         ]);

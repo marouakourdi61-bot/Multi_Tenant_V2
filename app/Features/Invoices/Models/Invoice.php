@@ -14,10 +14,15 @@ class Invoice extends Model
         'recipient',
         'currency',
         'vat',
+        'discount',
+        'discount_type',
         'items',
         'notes',
         'concluding_text',
         'total',
+        'subtotal',
+        'tax_amount',
+        'total_ttc',
         'status',
         'issue_date',
         'due_date',
@@ -26,6 +31,7 @@ class Invoice extends Model
     protected $casts = [
         'items' => 'array',
         'vat' => 'boolean',
+        'discount' => 'float',
     ];
 
     public function user()

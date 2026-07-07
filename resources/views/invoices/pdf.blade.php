@@ -86,74 +86,81 @@
             color: #374151;
         }
 
+        .meta .label {
+            color: #9ca3af;
+            font-size: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-sent {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-paid {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .client-box {
-
             margin-left: auto;
-
             width: 280px;
-
             padding: 20px;
-
             border: 1px solid #e5e7eb;
-
             border-radius: 10px;
-
             margin-bottom: 40px;
-
         }
 
         .client-title {
-
             font-size: 10px;
-
             color: #6366f1;
-
             font-weight: bold;
-
             margin-bottom: 8px;
-
         }
 
         .client-name {
-
             font-size: 18px;
-
             font-weight: bold;
-
         }
 
         .items {
-
             width: 100%;
-
             border-collapse: collapse;
-
             margin-top: 20px;
-
         }
 
         .items thead {
-
             background: #6366f1;
-
             color: white;
-
         }
 
         .items th {
-
             padding: 15px;
-
             font-size: 11px;
-
         }
 
         .items td {
-
             padding: 15px;
-
             border-bottom: 1px solid #ececec;
-
         }
 
         .center {
@@ -165,63 +172,48 @@
         }
 
         .summary {
-
             width: 320px;
-
             margin-left: auto;
-
             margin-top: 40px;
-
-        }
-
-        .summary-row {
-
-            padding: 10px 0;
-
         }
 
         .summary-table {
-
             width: 100%;
-
         }
 
         .summary-table td {
-
             padding: 8px 0;
+        }
 
+        .summary-label {
+            color: #6b7280;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .summary-discount {
+            color: #dc2626;
         }
 
         .total-final {
-
             font-size: 22px;
-
             font-weight: bold;
-
-            border-top: 1px solid #ddd;
-
+            border-top: 2px solid #6366f1;
             padding-top: 18px;
-
             color: #6366f1;
-
         }
 
         .notes {
-
             margin-top: 50px;
-
             padding-top: 20px;
-
             border-top: 1px solid #eee;
-
         }
 
         .notes-title {
-
             font-weight: bold;
-
             margin-bottom: 10px;
-
         }
     </style>
 
@@ -269,23 +261,39 @@
             <div class="meta">
 
                 <div>
-                    N° :
+                    <span class="label">N° :</span>
                     {{ $invoice->invoice_number }}
                 </div>
 
                 <div>
-                    Date :
+                    <span class="label">Date :</span>
                     {{ \Carbon\Carbon::parse($invoice->issue_date)->format('d/m/Y') }}
                 </div>
 
                 @if($invoice->due_date)
-
                     <div>
-                        Échéance :
+                        <span class="label">Échéance :</span>
                         {{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}
                     </div>
-
                 @endif
+
+                <div>
+                    <span class="label">Devise :</span>
+                    {{ $invoice->currency }}
+                </div>
+
+                <div>
+                    <span class="label">Statut :</span>
+                    <span class="status-badge status-{{ $invoice->status }}">
+                        @switch($invoice->status)
+                            @case('draft') Brouillon @break
+                            @case('sent') Envoyée @break
+                            @case('paid') Payée @break
+                            @case('cancelled') Annulée @break
+                            @default {{ $invoice->status }}
+                        @endswitch
+                    </span>
+                </div>
 
             </div>
 
@@ -322,7 +330,7 @@
                 </th>
 
                 <th class="text-right">
-                    PRIX
+                    PRIX UNITAIRE
                 </th>
 
                 <th class="text-right">
@@ -340,7 +348,10 @@
                         <tr>
 
                             <td>
-                                {{ $item['description'] ?? '-' }}
+                                <strong>{{ $item['name'] ?? '' }}</strong>
+                                @if(!empty($item['description']))
+                                    <br><span style="color: #6b7280; font-size: 10px;">{{ $item['description'] }}</span>
+                                @endif
                             </td>
 
                             <td class="center">
@@ -349,7 +360,7 @@
 
                             <td class="text-right">
 
-                                {{ number_format($item['unit_price'] ?? 0, 2) }}
+                                {{ number_format($item['unit_price'] ?? 0, 2, ',', ' ') }}
 
                                 {{ $invoice->currency }}
 
@@ -361,7 +372,7 @@
                     ($item['qty'] ?? 0)
                     *
                     ($item['unit_price'] ?? 0),
-                    2
+                    2, ',', ' '
                 ) }}
 
                                 {{ $invoice->currency }}
@@ -382,51 +393,73 @@
         <table class="summary-table">
 
             <tr>
-
-                <td>
-                    Sous-total
-                </td>
-
-                <td class="text-right">
-
-                    {{ number_format($invoice->total, 2) }}
-
+                <td class="summary-label">Sous-total HT</td>
+                <td class="text-right summary-value">
+                    {{ number_format($invoice->subtotal ?? $invoice->total, 2, ',', ' ') }}
                     {{ $invoice->currency }}
-
                 </td>
-
             </tr>
 
-            @if($invoice->vat)
-
+            @if(($invoice->discount ?? 0) > 0)
                 <tr>
-
-                    <td>
-                        TVA
+                    <td class="summary-label">Remise
+                        @if($invoice->discount_type === '%')
+                            ({{ number_format($invoice->discount, 1, ',', ' ') }}%)
+                        @endif
                     </td>
-
-                    <td class="text-right">
-                        20%
+                    <td class="text-right summary-discount">
+                        -{{ number_format(
+                            $invoice->discount_type === '%'
+                                ? ($invoice->subtotal ?? $invoice->total) * ($invoice->discount / 100)
+                                : $invoice->discount,
+                            2, ',', ' '
+                        ) }}
+                        {{ $invoice->currency }}
                     </td>
-
                 </tr>
+            @endif
 
+            @php
+                $subtotal = $invoice->subtotal ?? $invoice->total;
+                $discountVal = (float) ($invoice->discount ?? 0);
+                $discountType = $invoice->discount_type ?? '%';
+                $discountAmount = $discountType === '%' ? $subtotal * ($discountVal / 100) : $discountVal;
+                $afterDiscount = $subtotal - $discountAmount;
+            @endphp
+
+            <tr>
+                <td class="summary-label">Net HT après remise</td>
+                <td class="text-right summary-value">
+                    {{ number_format($afterDiscount, 2, ',', ' ') }}
+                    {{ $invoice->currency }}
+                </td>
+            </tr>
+
+            @if(!$invoice->vat)
+                <tr>
+                    <td class="summary-label">TVA (20%)</td>
+                    <td class="text-right summary-value">
+                        {{ number_format($invoice->tax_amount ?? 0, 2, ',', ' ') }}
+                        {{ $invoice->currency }}
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td class="summary-label">TVA</td>
+                    <td class="text-right summary-value">
+                        0,00 {{ $invoice->currency }}
+                    </td>
+                </tr>
             @endif
 
             <tr>
-
                 <td class="total-final">
-                    Total
+                    Total TTC
                 </td>
-
                 <td class="text-right total-final">
-
-                    {{ number_format($invoice->total, 2) }}
-
+                    {{ number_format($invoice->total_ttc ?? $afterDiscount, 2, ',', ' ') }}
                     {{ $invoice->currency }}
-
                 </td>
-
             </tr>
 
         </table>
@@ -442,7 +475,7 @@
                 Notes
             </div>
 
-            <div>
+            <div style="line-height: 1.6; color: #4b5563;">
                 {{ $invoice->notes }}
             </div>
 
@@ -453,7 +486,7 @@
 
     @if($invoice->concluding_text)
 
-        <div style="margin-top:20px">
+        <div style="margin-top: 30px; line-height: 1.6; color: #4b5563;">
 
             {{ $invoice->concluding_text }}
 

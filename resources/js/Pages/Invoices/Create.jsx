@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { useState, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 
 export default function Create({ clients = [] }) {
@@ -8,8 +9,9 @@ export default function Create({ clients = [] }) {
         issue_date: new Date().toISOString().split('T')[0],
         currency: 'MAD',
         vat: false,
+        discount: 0,
+        discount_type: '%',
         items: [
-
             {
                 qty: 1,
                 type: 'Service',
@@ -49,6 +51,34 @@ export default function Create({ clients = [] }) {
 
     const removeItem = (index) => {
         setData('items', data.items.filter((_, i) => i !== index));
+    };
+
+    // Calculs dynamiques
+    const { subtotalHT, discountAmount, afterDiscount, taxAmount, totalTTC } = useMemo(() => {
+        const sub = data.items.reduce((sum, item) => {
+            return sum + (parseFloat(item.qty) || 0) * (parseFloat(item.unit_price) || 0);
+        }, 0);
+
+        const disc = parseFloat(data.discount) || 0;
+        const discAmt = data.discount_type === '%'
+            ? sub * (disc / 100)
+            : disc;
+        const after = sub - discAmt;
+        const vatEnabled = !data.vat;
+        const tax = vatEnabled ? after * 0.20 : 0;
+        const ttc = after + tax;
+
+        return {
+            subtotalHT: sub,
+            discountAmount: discAmt,
+            afterDiscount: after,
+            taxAmount: tax,
+            totalTTC: ttc,
+        };
+    }, [data.items, data.discount, data.discount_type, data.vat]);
+
+    const formatAmount = (amount) => {
+        return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     const submit = (e) => {
@@ -146,7 +176,7 @@ export default function Create({ clients = [] }) {
                             <div className="flex items-center justify-between gap-4">
                                 <div>
                                     <h2 className="text-lg font-semibold text-slate-900">Informations</h2>
-                                    <p className="mt-1 text-sm text-slate-500">Date d’émission, devise et TVA.</p>
+                                    <p className="mt-1 text-sm text-slate-500">Date d'émission, devise et TVA.</p>
                                 </div>
                             </div>
 
@@ -181,6 +211,32 @@ export default function Create({ clients = [] }) {
                                 />
                                 VAT non applicable
                             </label>
+
+                            {/* Remise générale */}
+                            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Remise générale</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                        value={data.discount}
+                                        onChange={e => setData('discount', e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Type de remise</label>
+                                    <select
+                                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400"
+                                        value={data.discount_type}
+                                        onChange={e => setData('discount_type', e.target.value)}
+                                    >
+                                        <option value="%">Pourcentage (%)</option>
+                                        <option value="fixed">Montant fixe</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-6">
@@ -256,21 +312,27 @@ export default function Create({ clients = [] }) {
                             <div className="mt-6 space-y-4 text-sm text-slate-600">
                                 <div className="flex items-center justify-between">
                                     <span>Total HT</span>
-                                    <span>0,00 MAD</span>
+                                    <span className="font-semibold text-slate-900">{formatAmount(subtotalHT)} {data.currency}</span>
+                                </div>
+                                {discountAmount > 0 && (
+                                    <div className="flex items-center justify-between text-red-600">
+                                        <span>Remise {data.discount_type === '%' ? `(${data.discount}%)` : ''}</span>
+                                        <span className="font-semibold">-{formatAmount(discountAmount)} {data.currency}</span>
+                                    </div>
+                                )}
+                                <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                                    <span>Net HT après remise</span>
+                                    <span className="font-semibold text-slate-900">{formatAmount(afterDiscount)} {data.currency}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span>VAT</span>
-                                    <span>0,00 MAD</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span>Remise</span>
-                                    <span>0,00 MAD</span>
+                                    <span>TVA (20%)</span>
+                                    <span className="font-semibold text-slate-900">{formatAmount(taxAmount)} {data.currency}</span>
                                 </div>
                             </div>
                             <div className="mt-6 rounded-3xl bg-slate-900 px-5 py-4 text-white">
                                 <div className="flex items-center justify-between text-sm uppercase tracking-[0.18em] text-slate-300">
                                     <span>Total TTC</span>
-                                    <span>0,00 MAD</span>
+                                    <span className="text-lg font-bold">{formatAmount(totalTTC)} {data.currency}</span>
                                 </div>
                             </div>
                         </div>

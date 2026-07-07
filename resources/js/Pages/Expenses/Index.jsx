@@ -110,7 +110,7 @@ export default function Index({ expenses = [], invoices = [] }) {
                         href={route("expenses.create")}
                         className="flex items-center gap-2 px-6 py-2.5 bg-[#4648D4] text-white rounded-lg font-semibold shadow-sm hover:opacity-90 transition-all"
                     >
-                        <span className="material-symbols-outlined">add</span>
+                        <span className="material-symbols-outlined"></span>
                         <span>Ajouter une dépense</span>
                     </a>
                     <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-1">
