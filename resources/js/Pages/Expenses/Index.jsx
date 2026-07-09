@@ -9,7 +9,7 @@ const MONTHS = [
 
 export default function Index({ expenses = [], invoices = [] }) {
 
-    // console.log(expenses);
+    console.log("INVOICES :", invoices);
     
     const [editingCell, setEditingCell] = useState(null);
     const [editValue, setEditValue] = useState("");

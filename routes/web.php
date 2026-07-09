@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'downloadPdf'])
         ->name('invoices.download');
 
+    Route::patch('/invoices/{invoice}/status', [InvoiceController::class, 'updateStatus'])
+        ->name('invoices.updateStatus');
+
 
 
 

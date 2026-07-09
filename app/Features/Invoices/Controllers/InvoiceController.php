@@ -187,6 +187,19 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index');
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $invoice = Invoice::forCurrentTenant()->findOrFail($id);
+        
+        $request->validate([
+            'status' => 'required|string|in:draft,paid,pending',
+        ]);
+
+        $invoice->update(['status' => $request->status]);
+
+        return back()->with('success', 'Statut de la facture mis à jour.');
+    }
+
     public function downloadPdf($id)
     {
         $invoice = Invoice::forCurrentTenant()->findOrFail($id);

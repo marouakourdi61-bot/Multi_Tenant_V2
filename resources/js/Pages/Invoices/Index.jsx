@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 
 export default function Index({ invoices = [] }) {
@@ -11,6 +11,14 @@ export default function Index({ invoices = [] }) {
         (inv.recipient ?? inv.client_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
         (inv.invoice_number ?? '').toLowerCase().includes(search.toLowerCase())
     );
+
+    const updateStatus = (invoiceId, newStatus) => {
+        router.patch(window.route ? window.route('invoices.updateStatus', { invoice: invoiceId }) : `/invoices/${invoiceId}/status`, {
+            status: newStatus,
+        }, {
+            preserveScroll: true,
+        });
+    };
 
     return (
         <DashboardLayout>
@@ -113,7 +121,29 @@ export default function Index({ invoices = [] }) {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
+                                                    {inv.status !== 'paid' && (
+                                                        <button
+                                                            onClick={() => updateStatus(inv.id, 'paid')}
+                                                            className="p-2 rounded-lg hover:bg-green-100 transition"
+                                                            title="Marquer comme payée"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </button>
+                                                    )}
 
+                                                    {inv.status === 'paid' && (
+                                                        <button
+                                                            onClick={() => updateStatus(inv.id, 'draft')}
+                                                            className="p-2 rounded-lg hover:bg-yellow-100 transition"
+                                                            title="Marquer comme brouillon"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16H5v-4m0 0V7a2 2 0 012-2h10a2 2 0 012 2v4m0 0h8" />
+                                                            </svg>
+                                                        </button>
+                                                    )}
 
                                                     <Link href={`/invoices/${inv.id}/edit`} className="p-2 rounded-lg hover:bg-slate-100" title="Éditer">
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
