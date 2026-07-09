@@ -13,6 +13,7 @@ export default function Index({ expenses = [], invoices = [] }) {
     
     const [editingCell, setEditingCell] = useState(null);
     const [editValue, setEditValue] = useState("");
+    const [isRevenueToggled, setIsRevenueToggled] = useState(false);
     const year = 2026;
 
     function getAmount(expense, monthIndex) {
@@ -34,8 +35,15 @@ export default function Index({ expenses = [], invoices = [] }) {
     }
 
     function getRevenueForMonth(monthIndex) {
+        if (!isRevenueToggled) return 0;
+        
         return invoices
             .filter((inv) => {
+                // Vérifier que le statut est "paid"
+                const isPaid = inv.status === "paid";
+                if (!isPaid) return false;
+                
+                // Vérifier la date
                 const date = new Date(inv.issue_date);
                 return date.getMonth() === monthIndex && date.getFullYear() === year;
             })
@@ -47,9 +55,14 @@ export default function Index({ expenses = [], invoices = [] }) {
     }
 
     const grandTotal = expenses.reduce((sum, exp) => sum + getRowTotal(exp), 0);
-    const totalRevenue = invoices
-        .filter((inv) => new Date(inv.issue_date).getFullYear() === year)
-        .reduce((sum, inv) => sum + Number(inv.total), 0);
+    const totalRevenue = isRevenueToggled
+        ? invoices
+            .filter((inv) => {
+                const isPaid = inv.status === "paid";
+                return isPaid && new Date(inv.issue_date).getFullYear() === year;
+            })
+            .reduce((sum, inv) => sum + Number(inv.total), 0)
+        : 0;
     const netTotal = totalRevenue - grandTotal;
 
     function startEdit(expense, monthIndex, currentValue) {
@@ -113,8 +126,30 @@ export default function Index({ expenses = [], invoices = [] }) {
                         <span className="material-symbols-outlined"></span>
                         <span>Ajouter une dépense</span>
                     </a>
-                    <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-1">
-                        <span className="font-bold px-2">{year}</span>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-1">
+                            <span className="font-bold px-2">{year}</span>
+                        </div>
+
+                        {/* Switch d'activation des revenus */}
+                        <div className="flex items-center gap-2">
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    checked={isRevenueToggled}
+                                    onChange={(e) => setIsRevenueToggled(e.target.checked)}
+                                />
+
+                                <div className="w-11 h-6 bg-gray-300 peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full rounded-full">
+                                </div>
+
+                                <span className="ml-3 text-sm font-medium text-gray-900">
+                                    Calculer depuis les factures
+                                </span>
+                            </label>
+                            <span className="text-xs text-gray-500">(Factures payées par mois)</span>
+                        </div>
                     </div>
                 </div>
 
@@ -259,6 +294,25 @@ export default function Index({ expenses = [], invoices = [] }) {
                                 )}
                             </tbody>
                             <tfoot>
+                                {/* Ligne de revenus */}
+                                <tr className="bg-blue-50 font-bold text-blue-900 border-t border-gray-200">
+                                    <td className="p-3 sticky left-0 bg-blue-50 z-10 border-r border-gray-200">
+                                        Revenus
+                                        
+                                    </td>
+
+                                    
+                                    {MONTHS.map((_, monthIdx) => (
+                                        <td key={monthIdx} className="p-3 text-center border-r border-gray-100 text-blue-900">
+                                            {isRevenueToggled ? getRevenueForMonth(monthIdx).toFixed(2) : "—"}
+                                        </td>
+                                    ))}
+                                    <td className="p-3 text-center sticky right-0 bg-blue-50 border-l border-gray-200 text-blue-900">
+                                        {isRevenueToggled ? totalRevenue.toFixed(2) : "—"}
+                                    </td>
+                                </tr>
+
+                                {/* Ligne de Net */}
                                 <tr className="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
                                     <td className="p-3 sticky left-0 bg-gray-100 z-10 border-r border-gray-200">
                                         Net (Revenus − Dépenses)

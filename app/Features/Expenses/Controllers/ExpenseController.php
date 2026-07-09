@@ -29,7 +29,7 @@ class ExpenseController extends Controller
 
         $invoices = Invoice::forCurrentTenant()
             ->where('status', 'paid')
-            ->get(['total', 'issue_date']);
+            ->get(['status', 'issue_date', 'total']);
 
         return inertia(
             'Expenses/Index',
